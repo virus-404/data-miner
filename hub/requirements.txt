@@ -1,4 +1,0 @@
-tornado~=6.0.0
-pycurl~=7.43.0 
-twisted~=20.3.0
-pycares~=3.1.1
