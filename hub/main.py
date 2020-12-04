@@ -1,5 +1,6 @@
-import os
+import os, sys
 import importlib
+import pathlib
 from multiprocessing import Process
 from tools import logger as lg
 
@@ -10,8 +11,8 @@ def exec_starter(name):
 
 if __name__ == '__main__':
     logger = lg.Logger('Hub')  # Setting up the logger
-
     logger.log('Server has started...')
+    logger.log('Pythone version : ' + str(sys.version))
     p = Process(target=exec_starter, args=('twitter',))
     p.start()
     logger.log('Deploying Twitter')
