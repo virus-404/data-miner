@@ -20,4 +20,4 @@ def run():
     rules = streamer.get_rules(headers)
     delete = streamer.delete_all_rules(headers, rules)
     set = streamer.set_rules(headers, delete)
-    """get_stream(headers, set)  """
+    streamer.get_stream(headers, set)

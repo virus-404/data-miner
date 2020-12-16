@@ -1,2 +1,3 @@
 .vscode
 hub/twitter/keys.xml
+mongo-backup/backups/*

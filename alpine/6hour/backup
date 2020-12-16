@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "Usage: Hello !"
+cat /proc/mounts
