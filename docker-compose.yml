@@ -27,6 +27,7 @@ services:
   alpine: #backup for mongo
     container_name: alpine 
     build: ./alpine
+    command: touch /var/opt/backups/backup.log
     environment:
       URI: mongodb://root:example@mongo:27017/?authSource=admin
       BACKUP_PATH: /var/opt/backups/
