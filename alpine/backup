@@ -1,0 +1,14 @@
+#!/bin/sh
+TIMESTAMP=`date "+%Y/%m/%d-%H:%M:%S"`
+FILE=`date "+%Y%m%d-%H%M%S.tar.gz"`
+
+cd /var/opt/backups/
+mongodump --uri=$URI --out=$BACKUP_PATH --gzip 
+
+tar -czf  $FILE admin
+rm -r admin
+
+echo "$TIMESTAMP | Backup done .................... (!)"
+
+
+ 

@@ -1,6 +1,5 @@
 FROM alpine:latest
-WORKDIR /usr/local/bin
-COPY . ./
-RUN apk add --no-cache bash tini openrc busybox-initscripts  
-RUN ./startup.sh 
-ENTRYPOINT [ "./entrypoint.sh" ]
+RUN apk add --no-cache busybox-initscripts mongodb-tools bash
+COPY ./cronjob /etc/crontabs/root
+COPY ./backup /usr/local/bin/
+CMD ["crond", "-f", "-d", "8"]

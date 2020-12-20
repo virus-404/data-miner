@@ -17,8 +17,9 @@ services:
     ports: 
       - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=test
     volumes: 
       - mongodb:/data/db
     
@@ -26,10 +27,10 @@ services:
   alpine: #backup for mongo
     container_name: alpine 
     build: ./alpine
-    restart: on-failure
+    environment:
+      URI: mongodb://root:example@mongo:27017/?authSource=admin
+      BACKUP_PATH: /var/opt/backups/
     volumes: 
-      - ./alpine/startup.sh:/usr/local/bin/startup.sh:ro
-      - ./alpine/6hour:/etc/periodic/6hour/:ro
       - ./alpine/backups:/var/opt/backups
       -  mongodb:/data/db
 
@@ -37,7 +38,6 @@ services:
   mongo-express:
     container_name: mongo-express
     image: mongo-express:latest
-    restart: on-failure
     ports:
       - 8081:8081
     environment:
