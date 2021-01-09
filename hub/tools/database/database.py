@@ -1,13 +1,16 @@
 from pymongo import MongoClient
+from . import entry 
 
 class Database: 
-    #Singleton pattern 
-
+    """
+    A class decorator that creates a database object .
+    
+    """
     __instance__ = None
     
     def __init__(self):
         if Database.__instance__ is None:
-            __instance__ = pymongo.MongoClient("localhost", 27017)
+            __instance__ = pymongo.MongoClient()
         else: 
             raise Exception("You cannot create another Database class")
     
@@ -18,8 +21,8 @@ class Database:
         else
             return Database.__instance__
     
-
-
-
-      
- 
+    @staticmethod
+    def write(entry):
+        items = entry.get_items()
+        for key, value in items:
+            sel

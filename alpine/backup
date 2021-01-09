@@ -2,13 +2,12 @@
 TIMESTAMP=`date "+%Y/%m/%d-%H:%M:%S"`
 FILE=`date "+%Y%m%d-%H%M%S.tar.gz"`
 
+echo "$TIMESTAMP | Backup starting .................... "
+
 cd /var/opt/backups/
 mongodump --uri=$URI --out=$BACKUP_PATH --gzip 
 
-tar -czf  $FILE admin
-rm -r admin
+tar -czf  $FILE $DATABASE
+rm -r $DATABASE
 
-echo "$TIMESTAMP | Backup done .................... (!)"
-
-
- 
+echo "$TIMESTAMP | Backup done .................... "

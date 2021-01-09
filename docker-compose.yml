@@ -5,6 +5,8 @@ services:
   hub:
     container_name: hub
     build: ./hub 
+    environment: 
+      DB: mongodb://hub:t6MbQtUL@mongo:27017/social_networks #init-mongo.js
     depends_on: 
       - alpine
       - mongo
@@ -13,28 +15,28 @@ services:
   mongo:
     container_name: mongo
     image: mongo:latest
-    restart: on-failure
     ports: 
       - 27017:27017
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=user
-      - MONGO_INITDB_ROOT_PASSWORD=password
-      - MONGO_INITDB_DATABASE=test
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: social_networks
     volumes: 
       - mongodb:/data/db
-    
+      - ./hub/tools/database/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
   
   alpine: #backup for mongo
     container_name: alpine 
     build: ./alpine
     command: touch /var/opt/backups/backup.log
+    command: crond -f -l 8
     environment:
-      URI: mongodb://root:example@mongo:27017/?authSource=admin
+      URI: mongodb://root:example@mongo:27017/social_networks?authSource=admin
       BACKUP_PATH: /var/opt/backups/
+      DATABASE: social_networks
     volumes: 
       - ./alpine/backups:/var/opt/backups
       -  mongodb:/data/db
-
 
   mongo-express:
     container_name: mongo-express
