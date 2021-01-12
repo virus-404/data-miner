@@ -65,7 +65,7 @@ class Database:
 
     
     def insert_document(self, ssnn, document):
-        pass
+        
 
     def update_document(self, ssnn, document):
         pass
