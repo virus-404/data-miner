@@ -6,11 +6,10 @@ services:
     container_name: hub
     build: ./hub 
     environment: 
-      DB: mongodb://hub:t6MbQtUL@mongo:27017/social_networks #init-mongo.js
+      URI: mongodb://hub:t6MbQtUL@mongo:27017/social_networks #init-mongo.js
+      DB: social_networks
     depends_on: 
-      - alpine
       - mongo
-      - mongo-express
 
   mongo:
     container_name: mongo
@@ -37,6 +36,8 @@ services:
     volumes: 
       - ./alpine/backups:/var/opt/backups
       -  mongodb:/data/db
+    depends_on: 
+      - mongo
 
   mongo-express:
     container_name: mongo-express
@@ -46,6 +47,8 @@ services:
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
+    depends_on: 
+      - mongo
 
 volumes: 
   mongodb:
