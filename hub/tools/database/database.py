@@ -1,15 +1,21 @@
 import os
 from pymongo import MongoClient, errors
 from tools.logger import logger as lg
+from dataclasses import dataclass
 
+
+@dataclass(frozen=True)
 class Database: 
     """
     A class decorator that creates a database object .
     
     """
     __instance = None
-    __logger = None
+    
+    database = None
+    logger = None
     __key = object()
+    
     
     def __init__(self, key):
         assert (key == Database.__key), \
@@ -17,36 +23,36 @@ class Database:
         
         if Database.__instance is None:
             try:
-                self.__instance = MongoClient(
-                    os.environ['URI']).get_database()
+                ddbb = MongoClient(os.environ['URI']).get_database()
+                object.__setattr__(self, 'database', ddbb)
             except errors.ConnectionFailure as connection:
                 raise Exception("Connection to the database failed (!)")
             else:
-                self.__logger = lg.Logger('Database')
+                object.__setattr__(self,'logger', lg.Logger('Database'))
                 self.__insert_collections()
+                Database.__instance = self
         else: 
             raise Exception("There was no connection to the database (!)")
-    
 
     def __insert_collections(self):
         messages = []
         try:
-            self.__instance.create_collection('twitter')
+            self.database.create_collection('twitter')
         except errors.CollectionInvalid as exist:
             messages.append(str(exist))
 
         try:
-            self.__instance.create_collection('youtube')
+            self.database.create_collection('youtube')
         except errors.CollectionInvalid as exist:
             messages.append(str(exist))
 
         try:
-            self.__instance.create_collection('google')
+            self.database.create_collection('google')
         except errors.CollectionInvalid as exist:
             messages.append(str(exist))
 
         try:
-            self.__instance.create_collection('reddit')
+            self.database.create_collection('reddit')
         except errors.CollectionInvalid as exist:
             messages.append(str(exist))
 
@@ -54,24 +60,13 @@ class Database:
             messages.append('All collections were created successfully !')
 
         for message in messages:
-            self.__logger.log(message)
+            self.logger.log(message)
 
     @staticmethod
     def get_database_instance():
         if Database.__instance is None: 
             Database(Database.__key)
-        else:
-            return Database.__instance
+            assert (Database.__instance is not None), "Database is None (!)"
+        return Database.__instance
 
-    
-    def insert_document(self, ssnn, document):
-        
-
-    def update_document(self, ssnn, document):
-        pass
-
-    def delete_document(self, ssnn, document):
-        pass
-
-    def get_document(self, ssnn, document):
-        pass
+#https://stackabuse.com/the-singleton-design-pattern-in-python/
