@@ -2,8 +2,7 @@ from time import gmtime, strftime
 
 class Logger:
 
-    # instance attribute
-    def __init__(self, ssnn):
+    def __init__(self, ssnn):  # instance attribute
         self.__ssnn = '[' + ssnn + ']'
 
     def set_ssnn(self, ssnn):

@@ -1,12 +1,26 @@
 import requests
 import os
 import json
-
+from tools.database import database as db
 
 class Filtered_stream:
+
+    __database = None
+    __filter = None
     
-    def __init__(self,bearer_token):
+    def __init__(self,bearer_token, log):      
         self.__bearer_token = bearer_token
+        self.__log = log
+        self.__set_up_globals()
+
+    def __set_up_globals(self):
+        global __database, __filter
+        
+        __database = db.Database.get_database_instance()
+        self.__log.log('Twitter connection to the database is established')
+        with open('files/filter_word.json', 'r') as file:
+            __filter = json.load(file)
+        print(__filter)    
     
     def create_headers(self):
         headers = {"Authorization": "Bearer {}".format(self.__bearer_token)}

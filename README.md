@@ -1,6 +1,10 @@
 # DATA MINING IN LEATHER INDUSTRIES
 
 ## Ideas for developing: 
- - [ ] Replica for the calculator ¿?
+ - [X] Docker structure
+ - [X] Server main process
+ - [X] Back-up server with [alpine]{https://hub.docker.com/_/alpine/}
+ - [X] Connection to Twitter API
+ - [ ] Replica for the calculator 
  
 

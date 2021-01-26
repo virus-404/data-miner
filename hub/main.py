@@ -16,20 +16,19 @@ if __name__ == '__main__':
     logger.log('Server has started...') 
     logger.log('Python version : ' + str(sys.version))
     logger.log('Server is creating the database...')
-    
-    testdb = db.Database.get_database_instance()
-
-    res = testdb.database.twitter.insert_one({'succes': ':D', 'user': 'test1'})
-    logger.log(str(res.inserted_id))
-
-    res = testdb.database.twitter.delete_one({'_id': res.inserted_id})
-    logger.log(str(res.deleted_count))
 
     mp.set_start_method('fork')
     logger.log('All the processes are started with ' + mp.get_start_method() + ' method')
   
-    #p = mp.Process(target=exec_starter, args=('twitter',))
-    #p.start()
-    #logger.log('Deploying Twitter')
-    #p.join()
+    p = mp.Process(target=exec_starter, args=('twitter',))
+    p.start()
+    logger.log('Deploying Twitter')
+    p.join()
+
+    # testdb = db.Database.get_database_instance()
+    # res = testdb.database.twitter.insert_one({'succes': ':D', 'user': 'test1'})
+    # logger.log(str(res.inserted_id))
+    
+    # res = testdb.database.twitter.delete_one({'_id': res.inserted_id})
+    # logger.log(str(res.deleted_count))
  
