@@ -21,8 +21,8 @@ if __name__ == '__main__':
     logger.log('All the processes are started with ' + mp.get_start_method() + ' method')
   
     p = mp.Process(target=exec_starter, args=('twitter',))
-    p.start()
     logger.log('Deploying Twitter')
+    p.start()
     p.join()
 
     # testdb = db.Database.get_database_instance()

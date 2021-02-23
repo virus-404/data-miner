@@ -17,8 +17,8 @@ def run():
     keyring = keys.getroot()
 
     streamer = FLS(keyring.find('bearer-token').text, log)
-    # headers = streamer.create_headers()
-    # rules = streamer.get_rules(headers)
-    # delete = streamer.delete_all_rules(headers, rules)
-    # set = streamer.set_rules(headers, delete)
-    # streamer.get_stream(headers, set)
+    headers = streamer.create_headers()
+    rules = streamer.get_rules(headers)
+    delete = streamer.delete_all_rules(headers, rules)
+    set = streamer.set_rules(headers, delete)
+    streamer.get_stream(headers, set)

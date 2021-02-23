@@ -1,27 +1,29 @@
 import requests
 import os
+import sys
 import json
 from tools.database import database as db
 
 class Filtered_stream:
-
-    __database = None
-    __filter = None
     
     def __init__(self,bearer_token, log):      
         self.__bearer_token = bearer_token
         self.__log = log
-        self.__set_up_globals()
-
-    def __set_up_globals(self):
-        global __database, __filter
-        
-        __database = db.Database.get_database_instance()
-        self.__log.log('Twitter connection to the database is established')
-        with open('files/filter_word.json', 'r') as file:
-            __filter = json.load(file)
-        print(__filter)    
+        self.__database = self.__get_database()
+        self.__filter = self.__get_filter()
     
+    def __get_database(self):
+        database = db.Database.get_database_instance()
+        self.__log.log('Twitter connection to the database is established')
+        return database
+
+    def __get_filter(self):
+        with open('files/filter_word.json', 'r', encoding='utf-8') as file:
+            filter = json.load(file)
+        self.__log.log('Twitter filters are available')
+        return filter
+
+
     def create_headers(self):
         headers = {"Authorization": "Bearer {}".format(self.__bearer_token)}
         return headers
@@ -34,7 +36,7 @@ class Filtered_stream:
             raise Exception(
                 "Cannot get rules (HTTP {}): {}".format(response.status_code, response.text)
             )
-        print(json.dumps(response.json()))
+        self.__log.log('Retrieving the rules')
         return response.json()
 
     def delete_all_rules(self,headers, rules):
@@ -54,31 +56,35 @@ class Filtered_stream:
                     response.status_code, response.text
                 )
             )
-        print(json.dumps(response.json()))
+        self.__log.log('Deleting the previously available rules')
 
     def set_rules(self, headers, delete):
         # You can adjust the rules if needed
+        '''
         sample_rules = [
             {"value": "dog has:images", "tag": "dog pictures"},
             {"value": "cat has:images -grumpy", "tag": "cat pictures"},
         ]
-        payload = {"add": sample_rules}
+        '''
+        rules = self.__generate_rules()
+        payload = {"add": rules}
         response = requests.post(
             "https://api.twitter.com/2/tweets/search/stream/rules",
             headers=headers,
             json=payload,
         )
+       
         if response.status_code != 201:
+            print(json.dumps(response.json()))
             raise Exception(
                 "Cannot add rules (HTTP {}): {}".format(response.status_code, response.text)
             )
-        print(json.dumps(response.json()))
 
     def get_stream(self, headers, set):
         response = requests.get(
             "https://api.twitter.com/2/tweets/search/stream", headers=headers, stream=True,
         )
-        print(response.status_code)
+        print(json.dumps(response.json()))
         if response.status_code != 200:
             raise Exception(
                 "Cannot get stream (HTTP {}): {}".format(
@@ -90,4 +96,30 @@ class Filtered_stream:
                 json_response = json.loads(response_line)
                 print(json.dumps(json_response, indent=4, sort_keys=True))
 
-    
+    def __generate_rules(self):
+        rules = []
+        file = self.__filter                    
+        queries = self.__append_or(file['industry_words'], [])
+        queries = self.__append_or(file['companies'], queries)
+        queries = self.__append_or(file['csr_words'], queries)
+
+        solutions = []
+        for i in range(len(queries)):
+            solutions.append(' OR '.join([str(item) for item in queries[i]]))
+            
+        for i in range(len(solutions)): #Other forms are really slower like append()
+            rules.append({'value': solutions[i]})
+        return rules
+
+    def __append_or(self,file, queries):
+        queries.append([])
+        n = len(queries) - 1
+        for item in file:
+            if len(queries[n]) > 30 / 2:  # The maximum allowed is 30
+                n += 1
+                queries.append([])
+            queries[n].append(item)
+
+        return queries
+
+#https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/api-reference/get-tweets-search-stream-rules
