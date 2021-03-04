@@ -1,0 +1,9 @@
+{
+    "rules": [
+        "leatherfair",
+        "leather (ban OR ethics OR chrome-free OR natural dyed OR industries OR vegan OR Peta OR friendly OR sustainable OR mushroom OR environmental OR fungi-based OR pollution OR APLF)",
+        "tanning (ban OR ethics OR chrome-free OR natural dyed OR industries OR vegan OR Peta OR friendly OR sustainable OR mushroom OR environmental OR fungi-based OR pollution OR APLF)",
+        "tanneries (ban OR ethics OR chrome-free OR natural dyed OR industries OR vegan OR Peta OR friendly OR sustainable OR mushroom OR environmental OR fungi-based OR pollution OR APLF)",
+        "ban fur trade"        
+    ]
+}

@@ -11,11 +11,9 @@ def set_up():
 def run():
     log = set_up()
     log.log('Twitter setting up')
-    
     log.log('Reading credentials')
     keys = ET.parse('files/keys.xml')
     keyring = keys.getroot()
-
     streamer = FLS(keyring.find('bearer-token').text, log)
     headers = streamer.create_headers()
     rules = streamer.get_rules(headers)

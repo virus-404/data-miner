@@ -1,3 +1,4 @@
 .vscode
-hub/twitter/files/
+hub/twitter/files/*
+!hub/twitter/files/filter_word.json
 alpine/backups/**

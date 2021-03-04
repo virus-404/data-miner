@@ -73,7 +73,7 @@ class Filtered_stream:
             headers=headers,
             json=payload,
         )
-       
+        self.__log.log('Setting the new rules')
         if response.status_code != 201:
             print(json.dumps(response.json()))
             raise Exception(
@@ -81,10 +81,10 @@ class Filtered_stream:
             )
 
     def get_stream(self, headers, set):
+        self.__log.log('Receiving the stream ')
         response = requests.get(
             "https://api.twitter.com/2/tweets/search/stream", headers=headers, stream=True,
         )
-        print(json.dumps(response.json()))
         if response.status_code != 200:
             raise Exception(
                 "Cannot get stream (HTTP {}): {}".format(
@@ -97,29 +97,12 @@ class Filtered_stream:
                 print(json.dumps(json_response, indent=4, sort_keys=True))
 
     def __generate_rules(self):
-        rules = []
+        rules =  []
         file = self.__filter                    
-        queries = self.__append_or(file['industry_words'], [])
-        queries = self.__append_or(file['companies'], queries)
-        queries = self.__append_or(file['csr_words'], queries)
 
-        solutions = []
-        for i in range(len(queries)):
-            solutions.append(' OR '.join([str(item) for item in queries[i]]))
-            
-        for i in range(len(solutions)): #Other forms are really slower like append()
-            rules.append({'value': solutions[i]})
+        for item in file['rules']:
+            rules.append({'value': item })
+
         return rules
-
-    def __append_or(self,file, queries):
-        queries.append([])
-        n = len(queries) - 1
-        for item in file:
-            if len(queries[n]) > 30 / 2:  # The maximum allowed is 30
-                n += 1
-                queries.append([])
-            queries[n].append(item)
-
-        return queries
 
 #https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/api-reference/get-tweets-search-stream-rules
