@@ -94,7 +94,7 @@ class Filtered_stream:
         for response_line in response.iter_lines():
             if response_line:
                 json_response = json.loads(response_line)
-                print(json.dumps(json_response, indent=4, sort_keys=True))
+                self.__log.log(json.dumps(json_response, indent=4, sort_keys=True))
 
     def __generate_rules(self):
         rules =  []
