@@ -1,9 +1,16 @@
 {
     "rules": [
-        "leatherfair",
-        "leather (ban OR ethics OR chrome-free OR chrome OR natural dyed OR industries OR vegan OR Peta OR friendly OR sustainable OR mushroom OR environmental OR fungi-based OR pollution OR APLF)",
-        "tanning (ban OR ethics OR chrome-free OR chrome OR natural dyed OR industries OR vegan OR Peta OR friendly OR sustainable OR mushroom OR environmental OR fungi-based OR pollution OR APLF)",
-        "tanneries (ban OR ethics OR chrome-free OR chrome OR natural dyed OR industries OR vegan OR Peta OR friendly OR sustainable OR mushroom OR environmental OR fungi-based OR pollution OR APLF)",
-        "ban fur trade"        
+        "(leather ban) OR (leather ethics) OR (leather chrome) OR (leather chrome-free) OR (leather chrome) OR (leather natural dyed) OR (leather industries)",
+        "(leather vegan) OR (leather Peta) OR (leather friendly) OR (leather sustainable) OR (leather mushroom) OR (leather environmental) OR (leather fungi-based) OR (leather pollution) OR (leather APLF) OR (leather circular) OR (leather oeko-tex)",
+        "(tanning ban) OR (tanning ethics) OR (tanning chrome) OR (tanning chrome-free) OR (tanning chrome) OR (tanning natural dyed) OR (tanning industries) OR (tanning vegan) OR (tanning Peta) OR (tanning friendly) OR (tanning sustainable) OR (tanning mushroom)",
+        "(tanning environmental) OR (tanning fungi-based) OR (tanning pollution) OR (tanning APLF) OR (boltthreads)",
+        "(tanneries ban) OR (tanneries ethics) OR (tanneries chrome-free) OR (tanneries chrome) OR (tanneries natural dyed) OR (tanneries industries) OR (tanneries vegan) OR (tanneries Peta) OR (tanneries friendly) OR (tanneries sustainable)", 
+        "(tanneries mushroom) OR (tanneries chrome) OR  (tanneries environmental) OR (tanneries fungi-based) OR (tanneries pollution) OR (tanneries APLF)",
+        "(leather #handcrafted) OR (leather #environment) OR (leather #jobs) OR (leather #development) OR (leather #renewable) OR (leather #safe) OR (leather #respect) OR (leather #traceability) OR (leather #rawhide) OR (leather #awareness)",
+        "(leather #wildlife) OR (leather #global) OR (leather #goals) OR (leather #sustainable) OR (leather #water) OR (leather #carbonneutral) OR (leather #environmental) OR (leather #recycle) OR (leather #pollution) OR (leather #ethical) OR (leather #vegetal)",
+        "(tanning #handcrafted) OR (tanning #leather) OR (tanning #environment) OR (tanning #jobs) OR (tanning #development) OR (tanning #renewable) OR (tanning #safe) OR (tanning #respect) OR (tanning #traceability) OR (tanning #rawhide) OR (tanning #awareness)",
+        "(tanning #wildlife) OR (tanning #global) OR (tanning #goals) OR (tanning #sustainable) OR (tanning #water) OR (tanning #carbonneutral) OR (tanning #environmental) OR (tanning #recycle) OR (tanning #pollution) OR (tanning #ethical) OR (leather #vegetal)",
+        "(tanneries #handcrafted) OR (tanneries #leather) OR (tanneries #environment) OR (tanneries #jobs) OR (tanneries #development) OR (tanneries #renewable) OR (tanneries #safe) OR (tanneries #respect) OR (tanneries #traceability) OR (tanneries #rawhide)",
+        "(tanneries #awareness) OR (tanneries #wildlife) OR (tanneries #global) OR (tanneries #goals) OR (tanneries #sustainable) OR (tanneries #water) OR (tanneries #environmental) OR (tanneries #recycle) OR (tanneries #pollution) OR (tanneries #ethical)"
     ]
 }

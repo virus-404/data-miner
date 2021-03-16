@@ -1,4 +1,7 @@
 import os
+import time
+import traceback
+
 import xml.etree.ElementTree as ET
 from tools.logger import logger
 from .filtered_stream import Filtered_stream as FLS
@@ -14,9 +17,30 @@ def run():
     log.log('Reading credentials')
     keys = ET.parse('files/keys.xml')
     keyring = keys.getroot()
-    streamer = FLS(keyring.find('bearer-token').text, log)
-    headers = streamer.create_headers()
-    rules = streamer.get_rules(headers)
-    delete = streamer.delete_all_rules(headers, rules)
-    set = streamer.set_rules(headers, delete)
-    streamer.get_stream(headers, set)
+    n = 1 # number of attemps
+    
+    while True:
+        try:
+            streamer = FLS(keyring.find('bearer-token').text, log)
+            headers = streamer.create_headers()
+            rules = streamer.get_rules(headers)
+            delete = streamer.delete_all_rules(headers, rules)
+            set = streamer.set_rules(headers, delete)
+            n -=1
+        except:
+            var = traceback.format_exc()
+            print (e)
+        else:
+            for _ in range(10):
+                try:
+                    streamer.get_stream(headers, set)
+                except :
+                    var = traceback.format_exc()
+                    print(var)
+                finally: 
+                    time.sleep(60)
+        finally:
+            n += 1           
+            time.sleep(n*60)
+
+

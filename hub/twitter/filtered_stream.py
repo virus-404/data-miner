@@ -75,7 +75,7 @@ class Filtered_stream:
         )
         self.__log.log('Setting the new rules')
         if response.status_code != 201:
-            print(json.dumps(response.json()))
+            self.__log.log(json.dumps(response.json()))
             raise Exception(
                 "Cannot add rules (HTTP {}): {}".format(response.status_code, response.text)
             )
@@ -95,7 +95,15 @@ class Filtered_stream:
             if response_line:
                 json_response = json.loads(response_line)
                 self.__log.log(json.dumps(json_response, indent=4, sort_keys=True))
+    '''
+    from pymongo import MongoClient
+        cl = MongoClient()
+        coll = cl["local"]["test2"]
 
+        data = [{"_id" : 1, "foo" : "HELLO"}, {"_id" : 2, "Blah" : "Bloh"}]
+        for d in data:
+    coll.update({'_id':d['_id']}, d, True)
+    '''
     def __generate_rules(self):
         rules =  []
         file = self.__filter                    
@@ -104,5 +112,8 @@ class Filtered_stream:
             rules.append({'value': item })
 
         return rules
+
+    def __write_tweet(self, tweet):
+        pass
 
 #https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/api-reference/get-tweets-search-stream-rules
