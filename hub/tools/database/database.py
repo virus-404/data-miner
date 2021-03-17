@@ -23,14 +23,14 @@ class Database:
         
         if Database.__instance is None:
             try:
-                ddbb = MongoClient(os.environ['URI']).get_database()
+                ddbb = MongoClient(os.environ['URI']).get_database() # get_database with no "name" argument chooses the DB from the URI
                 object.__setattr__(self, 'database', ddbb)
             except errors.ConnectionFailure as connection:
                 raise Exception("Connection to the database failed (!)")
             else:
                 object.__setattr__(self,'logger', lg.Logger('Database'))
                 self.__insert_collections()
-                Database.__instance = self
+                Database.__instance = ddbb
         else: 
             raise Exception("There was no connection to the database (!)")
 

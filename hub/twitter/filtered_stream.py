@@ -15,6 +15,7 @@ class Filtered_stream:
     def __get_database(self):
         database = db.Database.get_database_instance()
         self.__log.log('Twitter connection to the database is established')
+        print(database.collection_names())
         return database
 
     def __get_filter(self):
@@ -94,7 +95,7 @@ class Filtered_stream:
         for response_line in response.iter_lines():
             if response_line:
                 json_response = json.loads(response_line)
-                self.__log.log(json.dumps(json_response, indent=4, sort_keys=True))
+                self.__log.log(str(json_response['data']))
     '''
     from pymongo import MongoClient
         cl = MongoClient()
@@ -102,7 +103,7 @@ class Filtered_stream:
 
         data = [{"_id" : 1, "foo" : "HELLO"}, {"_id" : 2, "Blah" : "Bloh"}]
         for d in data:
-    coll.update({'_id':d['_id']}, d, True)
+        coll.update({'_id':d['_id']}, d, True)
     '''
     def __generate_rules(self):
         rules =  []
@@ -110,7 +111,7 @@ class Filtered_stream:
 
         for item in file['rules']:
             rules.append({'value': item })
-
+            
         return rules
 
     def __write_tweet(self, tweet):

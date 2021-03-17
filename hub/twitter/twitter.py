@@ -17,11 +17,12 @@ def run():
     log.log('Reading credentials')
     keys = ET.parse('files/keys.xml')
     keyring = keys.getroot()
+    streamer = FLS(keyring.find('bearer-token').text, log)
     n = 1 # number of attemps
+    exit()
     
     while True:
         try:
-            streamer = FLS(keyring.find('bearer-token').text, log)
             headers = streamer.create_headers()
             rules = streamer.get_rules(headers)
             delete = streamer.delete_all_rules(headers, rules)
@@ -29,7 +30,7 @@ def run():
             n -=1
         except:
             var = traceback.format_exc()
-            print (e)
+            print (var)
         else:
             for _ in range(10):
                 try:
