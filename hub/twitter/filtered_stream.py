@@ -2,6 +2,8 @@ import requests
 import os
 import sys
 import json
+import pymongo
+from datetime import datetime
 from tools.database import database as db
 
 class Filtered_stream:
@@ -15,8 +17,9 @@ class Filtered_stream:
     def __get_database(self):
         database = db.Database.get_database_instance()
         self.__log.log('Twitter connection to the database is established')
-        print(database.collection_names())
-        return database
+        database['twitter'].drop_indexes()
+        database['twitter'].create_index([("time-stamp", pymongo.ASCENDING)])
+        return database['twitter']
 
     def __get_filter(self):
         with open('files/filter_word.json', 'r', encoding='utf-8') as file:
@@ -95,15 +98,12 @@ class Filtered_stream:
         for response_line in response.iter_lines():
             if response_line:
                 json_response = json.loads(response_line)
+                json_response['data'].update({'time-stamp' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
+                
+                self.__database.insert_one(json_response['data'])
                 self.__log.log(str(json_response['data']))
+                
     '''
-    from pymongo import MongoClient
-        cl = MongoClient()
-        coll = cl["local"]["test2"]
-
-        data = [{"_id" : 1, "foo" : "HELLO"}, {"_id" : 2, "Blah" : "Bloh"}]
-        for d in data:
-        coll.update({'_id':d['_id']}, d, True)
     '''
     def __generate_rules(self):
         rules =  []
@@ -114,7 +114,5 @@ class Filtered_stream:
             
         return rules
 
-    def __write_tweet(self, tweet):
-        pass
-
+#https://pymongo.readthedocs.io/en/stable/api/pymongo/collection.html?highlight=insert_index#pymongo.collection.Collection.insert
 #https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/api-reference/get-tweets-search-stream-rules

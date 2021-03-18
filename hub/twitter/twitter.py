@@ -19,7 +19,7 @@ def run():
     keyring = keys.getroot()
     streamer = FLS(keyring.find('bearer-token').text, log)
     n = 1 # number of attemps
-    exit()
+
     
     while True:
         try:
@@ -39,7 +39,7 @@ def run():
                     var = traceback.format_exc()
                     print(var)
                 finally: 
-                    time.sleep(60)
+                    time.sleep(75)
         finally:
             n += 1           
             time.sleep(n*60)
