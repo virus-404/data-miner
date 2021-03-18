@@ -98,10 +98,10 @@ class Filtered_stream:
         for response_line in response.iter_lines():
             if response_line:
                 json_response = json.loads(response_line)
-                json_response['data'].update({'time-stamp' : datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
-                
-                self.__database.insert_one(json_response['data'])
-                self.__log.log(str(json_response['data']))
+                response =  json_response['data']
+                response['time-stamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                self.__database.insert_one(response)
+                #self.__log.log(str(response)) for testing
                 
     '''
     '''
