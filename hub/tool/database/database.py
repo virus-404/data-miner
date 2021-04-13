@@ -1,6 +1,6 @@
 import os
 from pymongo import MongoClient, errors
-from tools.logger import logger as lg
+from tool.logger import logger as lg
 from dataclasses import dataclass
 
 

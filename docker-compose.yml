@@ -23,7 +23,7 @@ services:
     command: --quiet
     volumes: 
       - mongodb:/data/db
-      - ./hub/tools/database/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./hub/tool/database/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
   
   alpine: #backup for mongo
     container_name: alpine 

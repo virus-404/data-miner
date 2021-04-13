@@ -3,8 +3,8 @@ import sys
 import importlib
 import pathlib
 import multiprocessing as mp
-from tools.logger import logger as lg 
-from tools.database import database as db 
+from tool.logger import logger as lg 
+from tool.database import database as db 
 
 def exec_starter(name):
     social_network = importlib.import_module(name+'.'+name)
