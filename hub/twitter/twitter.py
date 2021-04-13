@@ -6,7 +6,13 @@ from tool.logger import logger
 import xml.etree.ElementTree as ET
 from .tweet.filtered_stream import FilteredStream
 
-mode = 'harvesting'
+'''
+    Beacuse the API is not giving the mterics of the tweets. The hub needs first the filtered tweet, and then gather the organic metrics.
+        -   Streaming:  getting filtered streams accordding to the filtered keywords of the folder file.
+        -   Updating:   getting tweets metrics by sending id.
+    It needs to be used first in streaming mode and then in updating mode. 
+'''
+mode = 'streaming' 
 
 def set_up():
     cwd = os.getcwd()  # Get the current working directory (cwd)
@@ -21,7 +27,7 @@ def run():
     keyring = keys.getroot()
 
 
-    if mode == 'harvesting':
+    if mode == 'streaming':
         n = 1 # number of attemps
         streamer = FilteredStream(keyring.find('bearer-token').text, log)
         
