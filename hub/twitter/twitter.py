@@ -1,9 +1,10 @@
 import os
 import time
 import traceback
-import xml.etree.ElementTree as ET
 from tool.logger import logger
-from .tweet import filtered_stream as FLS
+
+import xml.etree.ElementTree as ET
+from .tweet.filtered_stream import FilteredStream as FLS
 
 def set_up():
     cwd = os.getcwd()  # Get the current working directory (cwd)

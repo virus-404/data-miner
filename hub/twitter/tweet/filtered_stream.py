@@ -2,29 +2,21 @@ import requests
 import os
 import sys
 import json
-import pymongo
-from datetime import datetime
-from tool.database import database as db
 
-class Filtered_stream:
+from datetime import datetime
+from .token import Token
+
+
+class FilteredStream(Token):
     
     def __init__(self,bearer_token, log):      
-        self.__bearer_token = bearer_token
-        self.__log = log
-        self.__database = self.__get_database()
+        super().__init__(bearer_token, log)
         self.__filter = self.__get_filter()
     
-    def __get_database(self):
-        database = db.Database.get_database_instance()
-        self.__log.log('Twitter connection to the database is established')
-        database['twitter'].drop_indexes()
-        database['twitter'].create_index([("time-stamp", pymongo.ASCENDING)])
-        return database['twitter']
-
     def __get_filter(self):
         with open('files/filter_word.json', 'r', encoding='utf-8') as file:
             filter = json.load(file)
-        self.__log.log('Twitter filters are available')
+        self.log.log('Twitter filters are available')
         return filter
 
 
@@ -40,7 +32,7 @@ class Filtered_stream:
             raise Exception(
                 "Cannot get rules (HTTP {}): {}".format(response.status_code, response.text)
             )
-        self.__log.log('Retrieving the rules')
+        self.log.log('Retrieving the rules')
         return response.json()
 
     def delete_all_rules(self,headers, rules):
@@ -60,7 +52,7 @@ class Filtered_stream:
                     response.status_code, response.text
                 )
             )
-        self.__log.log('Deleting the previously available rules')
+        self.log.log('Deleting the previously available rules')
 
     def set_rules(self, headers, delete):
         # You can adjust the rules if needed
@@ -77,15 +69,15 @@ class Filtered_stream:
             headers=headers,
             json=payload,
         )
-        self.__log.log('Setting the new rules')
+        self.log.log('Setting the new rules')
         if response.status_code != 201:
-            self.__log.log(json.dumps(response.json()))
+            self.log.log(json.dumps(response.json()))
             raise Exception(
                 "Cannot add rules (HTTP {}): {}".format(response.status_code, response.text)
             )
 
     def get_stream(self, headers, set):
-        self.__log.log('Receiving the stream ')
+        self.log.log('Receiving the stream ')
         response = requests.get(
             "https://api.twitter.com/2/tweets/search/stream", headers=headers, stream=True,
         )
@@ -101,7 +93,7 @@ class Filtered_stream:
                 response =  json_response['data']
                 response['time-stamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 self.__database.insert_one(response)
-                #self.__log.log(str(response)) for testing
+                #self.log.log(str(response)) for testing
                 
     '''
     '''
