@@ -4,7 +4,7 @@ import traceback
 from tool.logger import logger
 
 import xml.etree.ElementTree as ET
-from .tweet.filtered_stream import FilteredStream as FLS
+from .tweet.filtered_stream import FilteredStream 
 
 def set_up():
     cwd = os.getcwd()  # Get the current working directory (cwd)
@@ -17,7 +17,7 @@ def run():
     log.log('Reading credentials')
     keys = ET.parse('files/keys.xml')
     keyring = keys.getroot()
-    streamer = FLS(keyring.find('bearer-token').text, log)
+    streamer = FilteredStream(keyring.find('bearer-token').text, log)
     import sys
     sys.exit()
     n = 1 # number of attemps
