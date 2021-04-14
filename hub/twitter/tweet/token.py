@@ -1,7 +1,8 @@
 import pymongo
+from abc import ABC, abstractmethod
 from tool.database import database as db
 
-class Token: 
+class Token(ABC): 
 
     def __init__(self, bearer_token, log):
         self.bearer_token = bearer_token
@@ -14,3 +15,8 @@ class Token:
         database['twitter'].drop_indexes()
         database['twitter'].create_index([("time-stamp", pymongo.ASCENDING)])
         return database['twitter']
+
+    @abstractmethod
+    def create_headers(self):
+        headers = {"Authorization": "Bearer {}".format(self.bearer_token)}
+        return headers

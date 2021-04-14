@@ -19,10 +19,8 @@ class FilteredStream(Token):
         self.log.log('Twitter filters are available')
         return filter
 
-
     def create_headers(self):
-        headers = {"Authorization": "Bearer {}".format(self.__bearer_token)}
-        return headers
+        return super().create_headers()
 
     def get_rules(self,headers):
         response = requests.get(
@@ -95,8 +93,6 @@ class FilteredStream(Token):
                 self.__database.insert_one(response)
                 #self.log.log(str(response)) for testing
                 
-    '''
-    '''
     def __generate_rules(self):
         rules =  []
         file = self.__filter                    
@@ -106,5 +102,4 @@ class FilteredStream(Token):
             
         return rules
 
-#https://pymongo.readthedocs.io/en/stable/api/pymongo/collection.html?highlight=insert_index#pymongo.collection.Collection.insert
-#https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/api-reference/get-tweets-search-stream-rules
+#https://developer.twitter.com/en/docs/twitter-api/rate-limits#v2-limits
