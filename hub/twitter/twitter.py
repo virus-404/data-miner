@@ -35,7 +35,7 @@ def run():
   
 
 def streaming_connection(token, log):
-    n = 1  # number of attemps see(1)
+    attemps = 1  # number of attemps see(1)
     streamer = FilteredStream(token, log)
     while True:
         try:
@@ -43,7 +43,7 @@ def streaming_connection(token, log):
             rules = streamer.get_rules(headers)
             delete = streamer.delete_all_rules(headers, rules)
             set = streamer.set_rules(headers, delete)
-            n -= 1
+            attemps -= 1
         except:
             var = traceback.format_exc()
             print(var)
@@ -57,17 +57,27 @@ def streaming_connection(token, log):
                 finally:
                     time.sleep(75)
         finally:
-            n += 1
+            attemps += 1
             time.sleep(n*60)
 
 def updating_connection(token, log):
     requests = 0
     updater = UpdateTweet(token, log)
     
-    updater.gather_ids()
-    headers = updater.create_headers()
-    
-    for id in updater.id_list:
+    try:
+        headers = updater.create_headers()
+        ids = updater.gather_ids()
+        for i in range(0, len(ids), 100):
+            updater.update(headers, ids[i:i+100])
+            
+
+    except:
+        var = traceback.format_exc()
+        print(var)
+
+
+'''
+ for id in updater.id_list:
         requests += updater.update(id)
 
         # 900 requests per 15-minute window (user auth) see(1)
@@ -75,9 +85,6 @@ def updating_connection(token, log):
             requests = 0
             time.sleep(900)
 
-
-
-'''
 >> for doc in db.test.find():
 ...     print(doc)
 ...

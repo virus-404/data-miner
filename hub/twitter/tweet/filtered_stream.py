@@ -1,6 +1,5 @@
 import requests
 import os
-import sys
 import json
 
 from datetime import datetime
@@ -13,14 +12,15 @@ class FilteredStream(Token):
         super().__init__(bearer_token, log)
         self.__filter = self.__get_filter()
     
+    def create_headers(self):
+        return super().create_headers()
+    
     def __get_filter(self):
         with open('files/filter_word.json', 'r', encoding='utf-8') as file:
             filter = json.load(file)
         self.log.log('Twitter filters are available')
         return filter
 
-    def create_headers(self):
-        return super().create_headers()
 
     def get_rules(self,headers):
         response = requests.get(
