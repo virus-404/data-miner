@@ -68,8 +68,8 @@ def updating_connection(token, log):
         headers = updater.create_headers()
         ids = updater.gather_ids()
         for i in range(0, len(ids), 100):
-            updater.update(headers, ids[i:i+100])
-            
+            updater.update(headers, ids[i:i+10])  # :i+100
+            break
 
     except:
         var = traceback.format_exc()

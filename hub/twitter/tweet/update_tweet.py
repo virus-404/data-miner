@@ -18,19 +18,16 @@ class UpdateTweet(Token):
     '''
     def update(self, headers, id):
 
-        import sys
         url = self.create_url(id)
-        print(url)
-        sys.exit()
         response = requests.request("GET", url, headers=headers)
-        
         if response.status_code != 200:
             raise Exception(
                 "Request returned an error: {} {}".format(
                     response.status_code, response.text
                 )
             )
-        self.log.log(str(response))  # for testing
+        
+        print(json.dumps(response.json(), indent=4, sort_keys=True))
 
     def create_url(self,id):
         # Tweet fields are adjustable.
@@ -40,7 +37,9 @@ class UpdateTweet(Token):
         # in_reply_to_user_id, lang, non_public_metrics, organic_metrics,
         # possibly_sensitive, promoted_metrics, public_metrics, referenced_tweets,
         # source, text, and withheld
-        tweet_fields = "tweet.fields=lang,author_id"
+        # tweet.fields=lang,author_id
+        tweet_fields = "expansions=referenced_tweets.id,referenced_tweets.id.author_id&tweet.fields=author_id,context_annotations,conversation_id,geo,lang,public_metrics,promoted_metrics,possibly_sensitive&user.fields=id,username,name,verified,location"
+
         # You can adjust ids to include a single Tweets e.g.:
         # "ids=1278747501642657792,1255542774432063488"
         # Or you can add to up to 100 comma-separated IDs
