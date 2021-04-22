@@ -30,20 +30,24 @@ class UpdateTweet(Token):
         print(json.dumps(response.json(), indent=4, sort_keys=True))
 
     def create_url(self,id):
-        # Tweet fields are adjustable.
-        # Options include:
-        # attachments, author_id, context_annotations,
-        # conversation_id, created_at, entities, geo, id,
-        # in_reply_to_user_id, lang, non_public_metrics, organic_metrics,
-        # possibly_sensitive, promoted_metrics, public_metrics, referenced_tweets,
-        # source, text, and withheld
+        # Tweet fields are adjustable. In order to use the extra fields an expansion field is requierd.
         # tweet.fields=lang,author_id
-        tweet_fields = "expansions=referenced_tweets.id,referenced_tweets.id.author_id&tweet.fields=author_id,context_annotations,conversation_id,geo,lang,public_metrics,promoted_metrics,possibly_sensitive&user.fields=id,username,name,verified,location"
+        # tweet_fields = "expansions=referenced_tweets.id,referenced_tweets.id.author_id
+        #                 &tweet.fields=author_id,entities,conversation_id,geo,lang,public_metrics,possibly_sensitive
+        #                 &user.fields=id,username,name,verified,location"
+
+        tweet_fields = "expansions=author_id,referenced_tweets.id&"
+        tweet_fields +="user.fields=id,username,name,verified,location&"
+        tweet_fields +="tweet.fields=author_id,"
+        tweet_fields += "entities.annotations.probability,entities.annotations.type,entities.annotations.normalized_text"
+        tweet_fields += "entities.urls.url,"
+        tweet_fields += ",conversation_id,geo,lang,public_metrics,possibly_sensitive"
 
         # You can adjust ids to include a single Tweets e.g.:
-        # "ids=1278747501642657792,1255542774432063488"
+        # ids = "ids=1278747501642657792,1255542774432063488"
         # Or you can add to up to 100 comma-separated IDs
         ids = 'ids=' + ','.join(id)
+        ids = "ids=1375074409392697352,1278747501642657792"
         url = "https://api.twitter.com/2/tweets?{}&{}".format(ids, tweet_fields)
         return url
     

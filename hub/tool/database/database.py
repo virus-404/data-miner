@@ -52,6 +52,11 @@ class Database:
             messages.append(str(exist))
 
         try:
+            self.database.create_collection('facebook')
+        except errors.CollectionInvalid as exist:
+            messages.append(str(exist))
+
+        try:
             self.database.create_collection('reddit')
         except errors.CollectionInvalid as exist:
             messages.append(str(exist))
