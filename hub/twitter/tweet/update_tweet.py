@@ -19,10 +19,10 @@ class UpdateTweet(Token):
     def update(self, headers, id):
 
         url = self.create_url(id)
-        response = requests.request("GET", url, headers=headers)
+        response = requests.request('GET', url, headers=headers)
         if response.status_code != 200:
             raise Exception(
-                "Request returned an error: {} {}".format(
+                'Request returned an error: {} {}'.format(
                     response.status_code, response.text
                 )
             )
@@ -30,25 +30,19 @@ class UpdateTweet(Token):
         print(json.dumps(response.json(), indent=4, sort_keys=True))
 
     def create_url(self,id):
-        # Tweet fields are adjustable. In order to use the extra fields an expansion field is requierd.
+        # Tweet fields are adjustable. 
         # tweet.fields=lang,author_id
-        # tweet_fields = "expansions=referenced_tweets.id,referenced_tweets.id.author_id
-        #                 &tweet.fields=author_id,entities,conversation_id,geo,lang,public_metrics,possibly_sensitive
-        #                 &user.fields=id,username,name,verified,location"
 
-        tweet_fields = "expansions=author_id,referenced_tweets.id&"
-        tweet_fields +="user.fields=id,username,name,verified,location&"
-        tweet_fields +="tweet.fields=author_id,"
-        tweet_fields += "entities.annotations.probability,entities.annotations.type,entities.annotations.normalized_text"
-        tweet_fields += "entities.urls.url,"
-        tweet_fields += ",conversation_id,geo,lang,public_metrics,possibly_sensitive"
+        tweet_fields =  'expansions=referenced_tweets.id,referenced_tweets.id.author_id'
+        tweet_fields += '&tweet.fields=author_id,conversation_id,created_at,entities,geo,in_reply_to_user_id,lang,possibly_sensitive,public_metrics'
+        tweet_fields += '&user.fields=id,username,name,verified,location'
 
         # You can adjust ids to include a single Tweets e.g.:
-        # ids = "ids=1278747501642657792,1255542774432063488"
+        # ids = 'ids=1278747501642657792,1255542774432063488'
         # Or you can add to up to 100 comma-separated IDs
         ids = 'ids=' + ','.join(id)
-        ids = "ids=1375074409392697352,1278747501642657792"
-        url = "https://api.twitter.com/2/tweets?{}&{}".format(ids, tweet_fields)
+        ids = 'ids=1375104520259260418'
+        url = 'https://api.twitter.com/2/tweets?{}&{}'.format(ids, tweet_fields)
         return url
     
         
