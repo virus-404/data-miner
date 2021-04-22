@@ -26,8 +26,8 @@ class UpdateTweet(Token):
                     response.status_code, response.text
                 )
             )
-        
-        print(json.dumps(response.json(), indent=4, sort_keys=True))
+       
+        print(json.dumps(response.json(), indent=4, sort_keys=False))
 
     def create_url(self,id):
         # Tweet fields are adjustable. 
@@ -41,9 +41,8 @@ class UpdateTweet(Token):
         # ids = 'ids=1278747501642657792,1255542774432063488'
         # Or you can add to up to 100 comma-separated IDs
         ids = 'ids=' + ','.join(id)
-        ids = 'ids=1375104520259260418'
+        ids = 'ids=1375104520259260418,1278747501642657792,1375072448819961858'
         url = 'https://api.twitter.com/2/tweets?{}&{}'.format(ids, tweet_fields)
         return url
-    
-        
+  
 #https://developer.twitter.com/en/docs/twitter-api/tweets/lookup/api-reference/get-tweets-id
