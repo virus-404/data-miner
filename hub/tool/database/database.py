@@ -36,8 +36,14 @@ class Database:
 
     def __insert_collections(self):
         messages = []
+
         try:
             self.database.create_collection('twitter')
+        except errors.CollectionInvalid as exist:
+            messages.append(str(exist))
+
+        try:
+            self.database.create_collection('twitter_users')
         except errors.CollectionInvalid as exist:
             messages.append(str(exist))
 

@@ -89,8 +89,7 @@ class FilteredStream(Token):
             if response_line:
                 json_response = json.loads(response_line)
                 response =  json_response['data']
-                response['time-stamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                self.__database.insert_one(response)
+                self.__database['twitter'].insert_one(response)
                 #self.log.log(str(response)) for testing
                 
     def __generate_rules(self):
@@ -99,7 +98,7 @@ class FilteredStream(Token):
 
         for item in file['rules']:
             rules.append({'value': item })
-            
+        
         return rules
 
 #https://developer.twitter.com/en/docs/twitter-api/rate-limits#v2-limits

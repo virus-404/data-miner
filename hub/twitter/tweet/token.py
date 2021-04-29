@@ -11,10 +11,18 @@ class Token(ABC):
 
     def __get_database(self):
         database = db.Database.get_database_instance()
+        collections = {}
+
         self.log.log('Twitter connection to the database is established')
         database['twitter'].drop_indexes()
-        database['twitter'].create_index([("time-stamp", pymongo.ASCENDING)])
-        return database['twitter']
+        database['twitter'].create_index([('created_at', pymongo.ASCENDING)])
+        collections['twitter'] = database['twitter']
+
+        database['twitter_users'].drop_indexes()
+        database['twitter_users'].create_index([('id', pymongo.ASCENDING)])
+        collections['twitter_users'] = database['twitter_users']
+
+        return collections
 
     @abstractmethod
     def create_headers(self):

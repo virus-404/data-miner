@@ -68,9 +68,7 @@ def updating_connection(token, log):
         headers = updater.create_headers()
         ids = updater.gather_ids()
         for i in range(0, len(ids), 100):
-            updater.update(headers, ids[i])  # :i+100
-            break
-
+            updater.update(headers, ids[i:i+100])  
     except:
         var = traceback.format_exc()
         print(var)
@@ -84,19 +82,6 @@ def updating_connection(token, log):
         if requests == 900: 
             requests = 0
             time.sleep(900)
-
->> for doc in db.test.find():
-...     print(doc)
-...
-{u'x': 1, u'_id': 0}
-{u'x': 1, u'_id': 1}
-{u'x': 1, u'_id': 2}
->> result = db.test.update_one({'x': 1}, {'$inc': {'x': 3}})
->> result.matched_count
-1
->> result.modified_count
-1
-
 
  (1) https://developer.twitter.com/en/docs/twitter-api/rate-limits#v2-limits
 
