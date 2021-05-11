@@ -23,7 +23,7 @@ services:
     command: --quiet
     volumes: 
       - mongodb:/data/db
-      - ./hub/tool/database/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
   
   mongo-express:
     container_name: mongo-express
@@ -56,9 +56,13 @@ services:
   analyzer: 
     container_name: analyzer
     build: ./analyzer
-
-
-
+    environment: 
+      URI: mongodb://analyzer:RgK6Bnya@mongo:27017/intelligence #init-mongo.js
+      DB: intelligence
+      URI2: mongodb://analyzer:pqq2BhwJ@mongo:27017/social_networks #init-mongo.js
+      DB2: social_networks
+    depends_on: 
+      - mongo
 
 volumes: 
   mongodb:

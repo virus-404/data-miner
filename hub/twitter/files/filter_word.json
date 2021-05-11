@@ -2,18 +2,18 @@
     "rules": [
         "(leather ban) OR (leather ethics) OR (leather ethic) OR (leather chrome) OR (leather chrome-free) OR (leather usage) OR (leather industries) OR (leather business) OR (leather industry) OR (leather legal) OR (leayher illegal)",
         "(leather natural) OR (leather vegan) OR (leather Peta) OR (leather friendly) OR (leather sustainable) OR (leather recylcle) OR (leather mushroom) OR (leather environmental) OR (leather fungi-based) OR (leather pollution) OR (leather APLF) OR (leather circular)", 
-        "(leather oeko-tex) OR (leather synthetic) OR (synthetic leather) OR (leather byproduct) OR (leather water treatments) OR (leather-free) OR (vegan fashion) OR (leather responsible) OR (leather traceability) OR (leather carbon neutral) OR (leather environmental)",
-        "(leather ethical fashion) OR (leather community) OR (leather animal) OR (leather plant) OR (leather alternatives) OR (cactus leather) OR (leather #innovation)",
+        "(leather cows) OR (leather synthetic) OR (leather byproduct) OR (leather water treatments) OR (leather-free) OR (vegan fashion) OR (leather responsible) OR (leather traceability) OR (leather carbon neutral) OR (leather environmental)",
+        "(leather cow) OR (leather ethical fashion) OR (leather community) OR (leather animal) OR (leather plant) OR (leather alternatives) OR (cactus leather) OR (leather #innovation)",
         "(leather #handcrafted) OR (leather #environment) OR (leather #jobs) OR (leather #development) OR (leather #renewable) OR (leather #safe) OR (leather #respect) OR (leather #traceability) OR (leather #rawhide) OR (leather #awareness)",
         "(leather #wildlife) OR (leather #global) OR (leather #goals) OR (leather #sustainable) OR (leather #water) OR (leather #carbonneutral) OR (leather #environmental) OR (leather #recycle) OR (leather #pollution) OR (leather #ethical) OR (leather #vegetal)",
         
         "(leathers ban) OR (leathers ethics) OR (leathers ethic) OR (leathers chrome) OR (leathers chrome-free) OR (leathers usage) OR (leathers industries) OR (leathers business) OR (leathers industry) OR (leathers legal) OR (leayher illegal)",
         "(leathers natural) OR (leathers vegan) OR (leathers Peta) OR (leathers friendly) OR (leathers sustainable) OR (leathers recylcle) OR (leathers mushroom) OR (leathers environmental) OR (leathers fungi-based) OR (leathers pollution) OR (leathers APLF) OR (leathers circular)",
-        "(leathers oeko-tex) OR (leathers synthetic) OR (synthetic leathers) OR (leathers byproduct) OR (leathers water treatments) OR (leathers-free) OR (vegan fashion) OR (leathers responsible) OR (leathers traceability) OR (leathers carbon neutral) OR (leathers environmental)",
+        "(leathers cows) OR (leathers synthetic) OR (leathers byproduct) OR (leathers water treatments) OR (leathers-free) OR (vegan fashion) OR (leathers responsible) OR (leathers traceability) OR (leathers carbon neutral) OR (leathers environmental)",
         "(leathers ethical fashion) OR (leathers community) OR (leathers animal) OR (leathers plant) OR (leathers alternatives) OR (cactus leathers) OR (leathers #innovation)",
         "(leathers #handcrafted) OR (leathers #environment) OR (leathers #jobs) OR (leathers #development) OR (leathers #renewable) OR (leathers #safe) OR (leathers #respect) OR (leathers #traceability) OR (leathers #rawhide) OR (leathers #awareness)",
         "(leathers #wildlife) OR (leathers #global) OR (leathers #goals) OR (leathers #sustainable) OR (leathers #water) OR (leathers #carbonneutral) OR (leathers #environmental) OR (leathers #recycle) OR (leathers #pollution) OR (leathers #ethical) OR (leathers #vegetal)",
         
-        "(tanneries) OR (tenneries) OR (tennerie) OR (tennery) OR (wear animal)"
+        "(tanneries) OR (tenneries) OR (tennerie) OR (tennery) OR (wear animal) OR (leather cattles) OR (leather boycott) OR (leather animal abuse) OR (leather cruel)"
     ]
 }

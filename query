@@ -1,0 +1,4 @@
+remove annoying bot
+{
+    text: {$regex: /\w\w\w\w\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w\w\w\w\w\w\w\w\w/}
+}
