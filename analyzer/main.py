@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import json
 import ast
+import stylecloud
 from tool.database import database as db
 
 

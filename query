@@ -2,3 +2,7 @@ remove annoying bot
 {
     text: {$regex: /\w\w\w\w\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w\w\w\w\w\w\w\w\w/}
 }
+
+import data 
+
+docker exec -i mongo sh -c 'mongoimport --uri "mongodb://root:example@mongo:27017/social_networks?authSource=admin" -c twitter ' < twitter

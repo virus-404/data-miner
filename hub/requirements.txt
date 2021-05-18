@@ -1,2 +1,6 @@
 requests
 pymongo
+ndg-httpsclient
+pyopenssl
+pyasn1
+ftfy

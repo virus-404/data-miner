@@ -1,9 +1,9 @@
 import os
 import time
 import traceback
-from tool.logger import logger
-
 import xml.etree.ElementTree as ET
+
+from tool.logger import logger
 from .tweet.filtered_stream import FilteredStream 
 from .tweet.update_tweet import UpdateTweet
 
@@ -26,7 +26,6 @@ def run():
     keys = ET.parse('files/keys.xml')
     keyring = keys.getroot()
     log.log('Reading credentials')
-    log.log(mode + 'is on')
 
     if mode == 'streaming':
         streaming_connection(keyring.find('bearer-token').text, log)
@@ -68,7 +67,13 @@ def updating_connection(token, log):
         headers = updater.create_headers()
         ids = updater.gather_ids()
         for i in range(0, len(ids), 100):
-            updater.update(headers, ids[i:i+100])  
+            log.log("Updating process: " + str(round((i/len(ids))*100, 2)) + '%')
+            while True:
+                try:
+                    updater.update(headers, ids[i:i+100])
+                    break
+                except:
+                    continue
     except:
         var = traceback.format_exc()
         print(var)

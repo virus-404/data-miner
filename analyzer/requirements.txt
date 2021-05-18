@@ -2,3 +2,4 @@ requests
 pymongo
 pandas
 frozendict 
+stylecloud
