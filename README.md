@@ -5,6 +5,6 @@
  - [X] Server main process
  - [X] Back-up server with [alpine]{https://hub.docker.com/_/alpine/}
  - [X] Connection to Twitter API
- - [ ] Replica for the calculator 
+ - [X] Replica for the calculator 
  
 
