@@ -61,6 +61,8 @@ services:
       DB: intelligence
       URI2: mongodb://analyzer:pqq2BhwJ@mongo:27017/social_networks #init-mongo.js
       DB2: social_networks
+    volumes: 
+      - ./analyzer/files:/usr/src/analyzer/files
     depends_on: 
       - mongo
 

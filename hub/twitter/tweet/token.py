@@ -1,6 +1,6 @@
 import pymongo
 from abc import ABC, abstractmethod
-from tool.database import database as db
+from tools.database import database as db
 
 class Token(ABC): 
 

@@ -2,13 +2,68 @@ import requests
 import pandas as pd
 import json
 import ast
+import csv 
 import stylecloud
-from tool.database import database as db
+from itertools import chain
+from tools.database import database as db
+from tools.logger import logger as lg
 
+log = lg.Logger('Analyzer')
 
 def main():
     database = db.Database.get_database_instance()
+    log.log('Database connection stablished')
+    texts = get_tweets_text(database)
+    log.log('Tweets\' texts are gathered')
+    counted_words = get_weighted_texts(texts)
+    log.log('Counting words by filter')
+    generate_wordcloud(counted_words)
+
+def get_tweets_text(database):
+    return [tweet['text'] for tweet in database['social_networks']['twitter'].find()]  # all
+
+
+def get_weighted_texts(texts):
+    word_list = get_filter()    
+    word_counter = {}
+
+    with open('files/counted_words.csv', 'w+', newline='') as file:
+        fieldnames = ['word', 'counter']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for text in texts: 
+            for word in text.split(): 
+              if word in word_list and word not in word_counter.keys():
+                  word_counter[word] = 1
+              elif word in word_counter.keys():
+                  word_counter[word] += 1
+        
+        for key, value in word_counter.items():
+            writer.writerow({'word': key, 'counter': value})
+
+def get_filter():
+    with open('files/filter_words.json', 'r', encoding='utf-8') as file:
+        filter= json.load(file)
+        log.log('Filter is available')
+        word_list = list(chain.from_iterable(filter.values()))
+    
+    return word_list
+    
+    
+    
+
+
+    
+
+
+def generate_wordcloud(counted_words):
+    pass
+
+
+
     '''
+    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/quickstarts/client-libraries-rest-api?tabs=version-3-1&pivots=programming-language-python
     documents = lang_data_shape(res_json)
     language_api_url, sentiment_url, subscription_key = connect_to_azure(data)
     headers = azure_header(subscription_key)
@@ -20,6 +75,7 @@ def main():
     print(week_score)
     week_logic(week_score)
     '''
+ 
 
 
 def lang_data_shape(res_json):

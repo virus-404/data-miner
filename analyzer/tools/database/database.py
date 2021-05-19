@@ -1,8 +1,8 @@
 import os
 from pymongo import MongoClient, errors
-from tool.logger import logger as lg
+from tools.logger import logger as lg
 from dataclasses import dataclass
-
+from frozendict import frozendict
 
 @dataclass(frozen=True)
 class Database: 
@@ -16,14 +16,16 @@ class Database:
     logger = None
     __key = object()
     
-    
     def __init__(self, key):
         assert (key == Database.__key), \
-         "Database objects must be created using Database.get_database_instance (!)"
+        "Database objects must be created using Database.get_database_instance (!)"
         
         if Database.__instance is None:
             try:
-                ddbb = MongoClient(os.environ['URI']).get_database() # get_database with no "name" argument chooses the DB from the URI
+                ddbb = frozendict({
+                    'intelligence': MongoClient(os.environ['URI']).get_database(),
+                    'social_networks': MongoClient(os.environ['URI2']).get_database()
+                }) # get_database with no "name" argument chooses the DB from the URI
                 object.__setattr__(self, 'database', ddbb)
             except errors.ConnectionFailure as connection:
                 raise Exception("Connection to the database failed (!)")
@@ -38,32 +40,8 @@ class Database:
         messages = []
 
         try:
-            self.database.create_collection('twitter')
-        except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
-
-        try:
-            self.database.create_collection('twitter_users')
-        except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
-
-        try:
-            self.database.create_collection('youtube')
-        except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
-
-        try:
-            self.database.create_collection('google')
-        except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
-
-        try:
-            self.database.create_collection('facebook')
-        except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
-
-        try:
-            self.database.create_collection('reddit')
+            self.database['intelligence'].create_collection(
+                'twitter_sentiment_analysis')
         except errors.CollectionInvalid as exist:
             messages.append(str(exist))
 

@@ -14,6 +14,6 @@
         "(leathers #handcrafted) OR (leathers #environment) OR (leathers #jobs) OR (leathers #development) OR (leathers #renewable) OR (leathers #safe) OR (leathers #respect) OR (leathers #traceability) OR (leathers #rawhide) OR (leathers #awareness)",
         "(leathers #wildlife) OR (leathers #global) OR (leathers #goals) OR (leathers #sustainable) OR (leathers #water) OR (leathers #carbonneutral) OR (leathers #environmental) OR (leathers #recycle) OR (leathers #pollution) OR (leathers #ethical) OR (leathers #vegetal)",
         
-        "(tanneries) OR (tenneries) OR (tennerie) OR (tennery) OR (wear animal) OR (leather cattles) OR (leather boycott) OR (leather animal abuse) OR (leather cruel) OR (leather climate)"
+        "(tanneries)  OR (wear animal) OR (leather cattles) OR (leather boycott) OR (leather animal abuse) OR (leather cruel) OR (leather climate) OR (tannery APLF) OR (APLF tanneries) "
     ]
 }

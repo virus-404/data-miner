@@ -3,7 +3,7 @@ import time
 import traceback
 import xml.etree.ElementTree as ET
 
-from tool.logger import logger
+from tools.logger import logger
 from .tweet.filtered_stream import FilteredStream 
 from .tweet.update_tweet import UpdateTweet
 
@@ -78,16 +78,4 @@ def updating_connection(token, log):
         var = traceback.format_exc()
         print(var)
 
-
-'''
- for id in updater.id_list:
-        requests += updater.update(id)
-
-        # 900 requests per 15-minute window (user auth) see(1)
-        if requests == 900: 
-            requests = 0
-            time.sleep(900)
-
- (1) https://developer.twitter.com/en/docs/twitter-api/rate-limits#v2-limits
-
-'''
+# (1) https://developer.twitter.com/en/docs/twitter-api/rate-limits#v2-limits

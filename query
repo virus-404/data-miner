@@ -5,4 +5,10 @@ remove annoying bot
 
 import data 
 
-docker exec -i mongo sh -c 'mongoimport --uri "mongodb://root:example@mongo:27017/social_networks?authSource=admin" -c twitter ' < twitter
+docker exec -i mongo sh -c 'mongoimport --uri "mongodb://root:example@mongo:27017/social_networks?authSource=admin" -c <FILE> ' < <FILE>
+
+list not actualized docs
+
+{
+    "time-stamp" : {$exists: true}
+}
