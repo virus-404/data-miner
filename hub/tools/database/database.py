@@ -40,32 +40,32 @@ class Database:
         try:
             self.database.create_collection('twitter')
         except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
+            messages.append(str(exist).capitalize())
 
         try:
             self.database.create_collection('twitter_users')
         except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
+            messages.append(str(exist).capitalize())
 
         try:
             self.database.create_collection('youtube')
         except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
+            messages.append(str(exist).capitalize())
 
         try:
             self.database.create_collection('google')
         except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
+            messages.append(str(exist).capitalize())
 
         try:
             self.database.create_collection('facebook')
         except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
+            messages.append(str(exist).capitalize())
 
         try:
             self.database.create_collection('reddit')
         except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
+            messages.append(str(exist).capitalize())
 
         if len(messages) == 0: 
             messages.append('All collections were created successfully !')

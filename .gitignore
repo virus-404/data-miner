@@ -1,7 +1,5 @@
 .vscode
-hub/twitter/files/keys.xml
+**/keys.xml
 alpine/backups/**
-analyzer/keys.xml
 twt
-analyzer/files/**
-!analyzer/files/filtered_words.json
+analyzer/files/*/**

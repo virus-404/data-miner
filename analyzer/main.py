@@ -2,43 +2,50 @@ import requests
 import pandas as pd
 import json
 import ast
-import csv 
-import stylecloud
+import cloud
+import csv
+
 from itertools import chain
 from tools.database import database as db
 from tools.logger import logger as lg
 
 log = lg.Logger('Analyzer')
+csv_name = 'counted_words_csr.csv'
+filtered = True
 
 def main():
     database = db.Database.get_database_instance()
     log.log('Database connection stablished')
     texts = get_tweets_text(database)
     log.log('Tweets\' texts are gathered')
-    counted_words = get_weighted_texts(texts)
+    generate_wordcount_csv(texts)
     log.log('Counting words by filter')
-    generate_wordcloud(counted_words)
+    generate_wordcloud()
+    log.log('Word cloud generated')
 
 def get_tweets_text(database):
     return [tweet['text'] for tweet in database['social_networks']['twitter'].find()]  # all
 
-
-def get_weighted_texts(texts):
+def generate_wordcount_csv(texts):
     word_list = get_filter()    
     word_counter = {}
 
-    with open('files/counted_words.csv', 'w+', newline='') as file:
+    with open('files/csvs/'+ csv_name, 'w+', newline='') as file:
         fieldnames = ['word', 'counter']
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
-
+        if filtered:
+            for word in word_list:
+                word_counter[word.lower()] = 1
+       
         for text in texts: 
             for word in text.split(): 
-              if word in word_list and word not in word_counter.keys():
+              word = word.replace(',', '').replace('.', '')
+              if word.lower() in word_counter.keys():
+                  word_counter[word.lower()] += 1
+              elif not filtered:
                   word_counter[word] = 1
-              elif word in word_counter.keys():
-                  word_counter[word] += 1
-        
+
         for key, value in word_counter.items():
             writer.writerow({'word': key, 'counter': value})
 
@@ -49,16 +56,15 @@ def get_filter():
         word_list = list(chain.from_iterable(filter.values()))
     
     return word_list
-    
-    
-    
+       
+#https: // github.com/minimaxir/stylistic-word-clouds/blob/master/wordcloud_dataisbeautiful.py https://minimaxir.com/2016/05/wordclouds/
 
-
-    
-
-
-def generate_wordcloud(counted_words):
-    pass
+def generate_wordcloud():
+    csv = csv_name
+    icon = "cow.png"
+    font = "Swansea-q3pd.ttf"
+    name = "csr_wordcloud.png"
+    cloud.create(csv, font, icon, name, filtered)
 
 
 

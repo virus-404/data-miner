@@ -43,7 +43,7 @@ class Database:
             self.database['intelligence'].create_collection(
                 'twitter_sentiment_analysis')
         except errors.CollectionInvalid as exist:
-            messages.append(str(exist))
+            messages.append(str(exist).capitalize())
 
         if len(messages) == 0: 
             messages.append('All collections were created successfully !')
