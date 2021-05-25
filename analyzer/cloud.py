@@ -34,8 +34,7 @@ def read_csv(csvf, filtered):
                 words_array[row['word'].upper()] = float(row['counter'])
         else:
             for row in reader:
-                if row['word'].startswith('http') or row['word'].startswith('@')\
-                        or row['word'].startswith('&') or row['word'] in not_wanted:
+                if row['word'].startswith('http') or row['word'] in not_wanted:
                     pass
                 elif float(row['counter']) < 1000:
                     pass

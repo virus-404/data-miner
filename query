@@ -12,3 +12,7 @@ list not actualized docs
 {
     "time-stamp" : {$exists: true}
 }
+
+list contains somthing
+
+{"text" : {$regex : ".*transparency.*"}}

@@ -16,10 +16,10 @@ class FilteredStream(Token):
         return super().create_headers()
     
     def __get_filter(self):
-        with open('files/filter_word.json', 'r', encoding='utf-8') as file:
-            filter = json.load(file)
+        with open('files/filter_word.json', 'r', encoding='utf-8') as f:
+            json_file = json.load(f)
         self.log.log('Twitter filters are available')
-        return filter
+        return json_file
 
 
     def get_rules(self,headers):
