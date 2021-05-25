@@ -14,7 +14,7 @@ from itertools import chain
 from tools.database import database as db
 from tools.logger import logger as lg
 
-filtered = False #filtered by filter_words,json: True uses the filter, off doesn't
+filtered = True #filtered by filter_words,json: True uses the filter, off doesn't
 name = 'counted_words' #name of the file
 
 log = lg.Logger('Analyzer')
@@ -36,12 +36,12 @@ def main():
     texts = get_tweets_text(database)
     textids = get_tweets_idtext(database)
     log.log('Tweets\' texts and ids are gathered')
+    '''
     log.log('Counting words by filter')
     generate_wordcount_csv(texts)
     log.log('Generating Wordcloud')
     generate_wordcloud()
     log.log('Wordcloud generated!')
-    '''
     log.log('Counting verified users')
     verified = count_verified(database)
     log.log('Generating pie')
@@ -57,9 +57,15 @@ def get_tweets_text(database):
 def get_tweets_idtext(database):
     return [{'id': tweet['id'],  'text': tweet['text']} for tweet in database['social_networks']['twitter'].find()]  # all
 
-def generate_wordcount_csv(texts):
+def generate_wordcount_csv(texts): #if a word appears +1 times in a text. It is counted as one.
     word_list = get_filter()  
     word_counter = {}
+    nleather = False # to delete the top 1 word, in my cas is leather
+
+    if nleather:
+        global picture_name, csv_name
+        picture_name = picture_name.replace('.png', '_nleather.png')
+        csv_name = csv_name.replace('.csv', '_nleather.csv')
 
     with open('files/csvs/'+ csv_name, 'w+', newline='') as f:
         fieldnames = ['word', 'counter']
@@ -81,14 +87,17 @@ def generate_wordcount_csv(texts):
             for text in texts:
                 for word in text.split(): 
                     word = word.lower()
-                    word = re.sub('[^A-Za-z0-9]+', '', word)
+                    word = re.sub('[^A-Za-z0-9]+', '', word) #delete all non alpahnumeric charcater. Also deletes emojis
                     if word in word_counter.keys():
                         word_counter[word] += 1
                     elif not filtered:
                         word_counter[word] = 1
 
+        if nleather:
+            del word_counter['leather']
+
         for key, value in word_counter.items():
-            writer.writerow({'word': key, 'counter': value})
+                writer.writerow({'word': key, 'counter': value})
 
 def get_filter():
     with open('files/filter_words.json', 'r', encoding='utf-8') as f:
