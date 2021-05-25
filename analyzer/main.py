@@ -1,27 +1,42 @@
 import requests
-import pandas as pd
 import json
 import ast
 import cloud
 import csv
+import re
+import pandas as pd
+import matplotlib.pyplot as plt
+import xml.etree.ElementTree as ET
 
+from azure.ai.textanalytics import TextAnalyticsClient
+from azure.core.credentials import AzureKeyCredential
 from itertools import chain
 from tools.database import database as db
 from tools.logger import logger as lg
 
 log = lg.Logger('Analyzer')
 csv_name = 'counted_words_csr.csv'
-filtered = True
+picture_name = 'counted_words_csr.png'
+filtered = False
 
 def main():
     database = db.Database.get_database_instance()
+    '''
     log.log('Database connection stablished')
     texts = get_tweets_text(database)
     log.log('Tweets\' texts are gathered')
-    generate_wordcount_csv(texts)
     log.log('Counting words by filter')
+    generate_wordcount_csv(texts)
+    log.log('Generating Wordcloud')
     generate_wordcloud()
-    log.log('Word cloud generated')
+    log.log('Counting verified users')
+    verified = count_verified(database)
+    log.log('Generating pie')
+    generate_pie(verified)
+    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/quickstarts/client-libraries-rest-api?tabs=version-3-1&pivots=programming-language-python
+    '''
+    client = authenticate_client()
+    #sentiment_analysis_example(client)
 
 def get_tweets_text(database):
     return [tweet['text'] for tweet in database['social_networks']['twitter'].find()]  # all
@@ -40,9 +55,10 @@ def generate_wordcount_csv(texts):
        
         for text in texts: 
             for word in text.split(): 
-              word = word.replace(',', '').replace('.', '')
-              if word.lower() in word_counter.keys():
-                  word_counter[word.lower()] += 1
+              word = word.lower()
+              word = re.sub('[^A-Za-z0-9]+', '', word)
+              if word in word_counter.keys():
+                  word_counter[word] += 1
               elif not filtered:
                   word_counter[word] = 1
 
@@ -57,82 +73,69 @@ def get_filter():
     
     return word_list
        
-#https: // github.com/minimaxir/stylistic-word-clouds/blob/master/wordcloud_dataisbeautiful.py https://minimaxir.com/2016/05/wordclouds/
-
 def generate_wordcloud():
-    csv = csv_name
-    icon = "cow.png"
-    font = "Swansea-q3pd.ttf"
-    name = "csr_wordcloud.png"
-    cloud.create(csv, font, icon, name, filtered)
+    icon = 'cow.png'
+    font = 'Swansea-q3pd.ttf'
+    cloud.create(csv_name, font, icon, picture_name, filtered)
+
+    #https: // github.com/minimaxir/stylistic-word-clouds/blob/master/wordcloud_dataisbeautiful.py https://minimaxir.com/2016/05/wordclouds/
+
+def count_verified(database): 
+    data = {'Verified': 0, 'Not verified': 0}
+    for user in database['social_networks']['twitter_users'].find():
+        if user['verified']:
+            data['Verified'] += 1
+        else: 
+            data['Not verified'] += 1
+
+    return data
+
+def generate_pie(data):
+    # Pie chart, where the slices will be ordered and plotted counter-clockwise:
+    explode = (0, 0.1)   # only 'explode' the 2nd slice (i.e. 'Hogs')
+    fig1, ax1 = plt.subplots(figsize=(4, 4))
+    colors = ('#2aa7f3','#d3d3d3')
+    ax1.pie(data.values(), explode=explode, labels=data.keys(), autopct='%1.1f%%',
+            colors=colors, shadow=True, startangle=90)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.savefig('files/results/verified.png', transparent=True)
+
+
+def authenticate_client():
+    keys = ET.parse('files/keys.xml')
+    tree = keys.getroot()
+    key = tree.find('key').text
+    endpoint = tree.find('endpoint').text
+
+    ta_credential = AzureKeyCredential(key)
+    text_analytics_client = TextAnalyticsClient(
+        endpoint=endpoint,
+        credential=ta_credential)
+    return text_analytics_client
+
+
+def sentiment_analysis_example(client):
+
+    documents = [
+        "I had the best day of my life. I wish you were there with me."]
+    response = client.analyze_sentiment(documents=documents)[0]
+    print("Document Sentiment: {}".format(response.sentiment))
+    print("Overall scores: positive={0:.2f}; neutral={1:.2f}; negative={2:.2f} \n".format(
+        response.confidence_scores.positive,
+        response.confidence_scores.neutral,
+        response.confidence_scores.negative,
+    ))
+    for idx, sentence in enumerate(response.sentences):
+        print("Sentence: {}".format(sentence.text))
+        print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
+        print("Sentence score:\nPositive={0:.2f}\nNeutral={1:.2f}\nNegative={2:.2f}\n".format(
+            sentence.confidence_scores.positive,
+            sentence.confidence_scores.neutral,
+            sentence.confidence_scores.negative,
+        ))
 
 
 
-    '''
-    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/quickstarts/client-libraries-rest-api?tabs=version-3-1&pivots=programming-language-python
-    documents = lang_data_shape(res_json)
-    language_api_url, sentiment_url, subscription_key = connect_to_azure(data)
-    headers = azure_header(subscription_key)
-    with_languages = generate_languages(headers, language_api_url, documents)
-    json_lines = combine_lang_data(documents, with_languages)
-    document_format = add_document_format(json_lines)
-    sentiments = sentiment_scores(headers, sentiment_url, document_format)
-    week_score = mean_score(sentiments)
-    print(week_score)
-    week_logic(week_score)
-    '''
- 
-
-
-def lang_data_shape(res_json):
-    data_only = res_json["data"]
-    doc_start = '"documents": {}'.format(data_only)
-    str_json = "{" + doc_start + "}"
-    dump_doc = json.dumps(str_json)
-    doc = json.loads(dump_doc)
-    return ast.literal_eval(doc)
-
-def connect_to_azure(data):
-    azure_url = "https://week.cognitiveservices.azure.com/"
-    language_api_url = "{}text/analytics/v2.1/languages".format(azure_url)
-    sentiment_url = "{}text/analytics/v2.1/sentiment".format(azure_url)
-    subscription_key = data["azure"]["subscription_key"]
-    return language_api_url, sentiment_url, subscription_key
-
-def generate_languages(headers, language_api_url, documents):
-    response = requests.post(language_api_url, headers=headers, json=documents)
-    return response.json()
-
-def combine_lang_data(documents, with_languages):
-    langs = pd.DataFrame(with_languages["documents"])
-    lang_iso = [x.get("iso6391Name")
-                for d in langs.detectedLanguages if d for x in d]
-    data_only = documents["documents"]
-    tweet_data = pd.DataFrame(data_only)
-    tweet_data.insert(2, "language", lang_iso, True)
-    json_lines = tweet_data.to_json(orient="records")
-    return json_lines
-
-def add_document_format(json_lines):
-    docu_format = '"' + "documents" + '"'
-    json_docu_format = "{}:{}".format(docu_format, json_lines)
-    docu_align = "{" + json_docu_format + "}"
-    jd_align = json.dumps(docu_align)
-    jl_align = json.loads(jd_align)
-    return ast.literal_eval(jl_align)
-
-def sentiment_scores(headers, sentiment_url, document_format):
-    response = requests.post(
-        sentiment_url, headers=headers, json=document_format)
-    return response.json()
-
-def week_logic(week_score):
-    if week_score > 0.75 or week_score == 0.75:
-        print("You had a positive week")
-    elif week_score > 0.45 or week_score == 0.45:
-        print("You had a neutral week")
-    else:
-        print("You had a negative week, I hope it gets better")
 
 if __name__ == '__main__':
     main()

@@ -3,4 +3,4 @@ pymongo
 pandas
 frozendict 
 stylecloud
-scipy
+azure-ai-textanalytics

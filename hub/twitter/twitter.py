@@ -23,8 +23,8 @@ def set_up():
 def run():
     log = set_up()
     log.log('Twitter setting up')
-    keys = ET.parse('files/keys.xml')
-    keyring = keys.getroot()
+    tree = ET.parse('files/keys.xml')
+    keyring = tree.getroot()
     log.log('Reading credentials')
 
     if mode == 'streaming':
