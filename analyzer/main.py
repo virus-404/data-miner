@@ -14,29 +14,22 @@ from itertools import chain
 from tools.database import database as db
 from tools.logger import logger as lg
 
-filtered = True #filtered by filter_words,json: True uses the filter, off doesn't
-name = 'counted_words' #name of the file
+filtered = True  # filtered by filter_words,json: True uses the filter, off doesn't
+name = 'counted_words'  # name of the file
 
 log = lg.Logger('Analyzer')
 csv_name = ''
 picture_name = ''
 
+
 def main():
-    global csv_name, picture_name
-
-    if filtered:
-        csv_name = name + '_csr.csv'
-        picture_name = name + '_csr.png'
-    else:
-        csv_name = name + '_all.csv'
-        picture_name = name + '_all.png'
-
+    set_name_files()
     database = db.Database.get_database_instance()
     log.log('Database connection stablished')
     texts = get_tweets_text(database)
     textids = get_tweets_idtext(database)
-    log.log('Tweets\' texts and ids are gathered')
     '''
+    log.log('Tweets\' texts and ids are gathered')
     log.log('Counting words by filter')
     generate_wordcount_csv(texts)
     log.log('Generating Wordcloud')
@@ -49,33 +42,49 @@ def main():
     https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/quickstarts/client-libraries-rest-api?tabs=version-3-1&pivots=programming-language-python
     '''
     client = authenticate_client()
-    calculate_sentiment_analysis(client, textids)
+    calculate_sentiment_analysis(client, textids, database)
+
+
+def set_name_files():
+    global csv_name, picture_name
+
+    if filtered:
+        csv_name = name + '_csr.csv'
+        picture_name = name + '_csr.png'
+    else:
+        csv_name = name + '_all.csv'
+        picture_name = name + '_all.png'
+
 
 def get_tweets_text(database):
     return [tweet['text'] for tweet in database['social_networks']['twitter'].find()]  # all
 
+
 def get_tweets_idtext(database):
     return [{'id': tweet['id'],  'text': tweet['text']} for tweet in database['social_networks']['twitter'].find()]  # all
 
-def generate_wordcount_csv(texts): #if a word appears +1 times in a text. It is counted as one.
-    word_list = get_filter()  
+
+
+# if a word appears +1 times in a text. It is counted as one.
+def generate_wordcount_csv(texts):
+    word_list = get_filter()
     word_counter = {}
-    nleather = False # to delete the top 1 word, in my cas is leather
+    nleather = False  # to delete the top 1 word, in my case is leather
 
     if nleather:
         global picture_name, csv_name
         picture_name = picture_name.replace('.png', '_nleather.png')
         csv_name = csv_name.replace('.csv', '_nleather.csv')
 
-    with open('files/csvs/'+ csv_name, 'w+', newline='') as f:
+    with open('files/csvs/' + csv_name, 'w+', newline='') as f:
         fieldnames = ['word', 'counter']
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
-        if filtered: #in filter_words
+        if filtered:  # in filter_words
             for word in word_list:
                 word = word.lower()
                 word_counter[word] = 1
-            
+
             for text in texts:
                 text = text.replace('@', ' ').replace('#', ' ')
                 for word in word_list:
@@ -83,11 +92,12 @@ def generate_wordcount_csv(texts): #if a word appears +1 times in a text. It is 
                     regex = '\\b' + word.replace(' ', '\\b.*\\b') + '\\b'
                     if re.search(regex, text):
                         word_counter[word.lower()] += 1
-        else: #each word
+        else:  # each word
             for text in texts:
-                for word in text.split(): 
+                for word in text.split():
                     word = word.lower()
-                    word = re.sub('[^A-Za-z0-9]+', '', word) #delete all non alpahnumeric charcater. Also deletes emojis
+                    # delete all non alpahnumeric charcater. Also deletes emojis
+                    word = re.sub('[^A-Za-z0-9]+', '', word)
                     if word in word_counter.keys():
                         word_counter[word] += 1
                     elif not filtered:
@@ -97,42 +107,48 @@ def generate_wordcount_csv(texts): #if a word appears +1 times in a text. It is 
             del word_counter['leather']
 
         for key, value in word_counter.items():
-                writer.writerow({'word': key, 'counter': value})
+            writer.writerow({'word': key, 'counter': value})
+
 
 def get_filter():
     with open('files/filter_words.json', 'r', encoding='utf-8') as f:
         json_file = json.load(f)
         log.log('Filter is available')
         word_list = list(chain.from_iterable(json_file.values()))
-    
+
     return word_list
-       
+
+
 def generate_wordcloud():
     icon = 'cow.png'
     font = 'Swansea-q3pd.ttf'
     cloud.create(csv_name, font, icon, picture_name, filtered)
 
-    #https: // github.com/minimaxir/stylistic-word-clouds/blob/master/wordcloud_dataisbeautiful.py https://minimaxir.com/2016/05/wordclouds/
+    # https: // github.com/minimaxir/stylistic-word-clouds/blob/master/wordcloud_dataisbeautiful.py https://minimaxir.com/2016/05/wordclouds/
 
-def count_verified(database): 
+
+def count_verified(database):
     data = {'Verified': 0, 'Not verified': 0}
     for user in database['social_networks']['twitter_users'].find():
         if user['verified']:
             data['Verified'] += 1
-        else: 
+        else:
             data['Not verified'] += 1
 
     return data
+
 
 def generate_pie_2opt(data):
     # Pie chart, where the slices will be ordered and plotted counter-clockwise:
     explode = (0, 0.1)   # only 'explode' the 2nd slice (i.e. 'Hogs')
     fig1, ax1 = plt.subplots(figsize=(4, 4))
-    colors = ('#2aa7f3','#d3d3d3')
+    colors = ('#2aa7f3', '#d3d3d3')
     ax1.pie(data.values(), explode=explode, labels=data.keys(), autopct='%1.1f%%',
             colors=colors, shadow=True, startangle=90)
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    # Equal aspect ratio ensures that pie is drawn as a circle.
+    ax1.axis('equal')
     plt.savefig('files/results/verified.png', transparent=True)
+
 
 def authenticate_client():
     keys = ET.parse('files/keys.xml')
@@ -146,32 +162,24 @@ def authenticate_client():
         credential=ta_credential)
     return text_analytics_client
 
-def calculate_sentiment_analysis(client, textids):
-    tweets = filter_tweets(textids)
-    for tweet in tweets.keys():
-        print(tweet,len(tweets[tweet]))
 
+def calculate_sentiment_analysis(client, textids, database):
+    full_tweets = filter_tweets(textids)
+    asso_tweets = filter_by_asso(full_tweets)
+    full_ids = withdraw_ids(full_tweets)
+    asso_ids = withdraw_ids(asso_tweets)
+    log.log('Ids from tweets are already gathered')
+    full_metrics = aggregate_metrics(full_ids, database)
 
-def filter_tweets(textids):
-    tweets = {}
+    for k, v in asso_tweets.items():
+        print(k, len(v))
+    print('asso', len(asso_ids))
+    print('full', len(full_ids))
 
-    with open ('files/association_words.json', 'r') as f:
-        log.log('Association words are available')
-        json_file = json.load(f)
-        wordlist = json_file['association']
-        for word in wordlist:
-            tweets[word] = []
-    
-    for textid in textids:
-        for word in wordlist: 
-            regex = '\\b' + word.replace(' ', '\\b.*\\b') + '\\b'
-            if re.search(regex, textid['text']):
-                tweets[word].append(textid)
-
-    return tweets
-
-    
     """
+    https://www.pythoncharts.com/matplotlib/stacked-bar-charts-labels/
+    https://www.pythoncharts.com/matplotlib/radar-charts/
+
     response = client.analyze_sentiment(documents=documents)[0]
     print("Document Sentiment: {}".format(response.sentiment))
     print("Overall scores: positive={0:.2f}; neutral={1:.2f}; negative={2:.2f} \n".format(
@@ -179,16 +187,79 @@ def filter_tweets(textids):
         response.confidence_scores.neutral,
         response.confidence_scores.negative,
     ))
-    for idx, sentence in enumerate(response.sentences):
-        print("Sentence: {}".format(sentence.text))
-        print("Sentence {} sentiment: {}".format(idx+1, sentence.sentiment))
-        print("Sentence score:\nPositive={0:.2f}\nNeutral={1:.2f}\nNegative={2:.2f}\n".format(
-            sentence.confidence_scores.positive,
-            sentence.confidence_scores.neutral,
-            sentence.confidence_scores.negative,
-        ))
+
     """
 
+def filter_tweets(textids):
+    full_tweets = {}
+    for word in get_filter():
+        full_tweets[word] = []
+
+    for textid in textids:
+        for word in full_tweets.keys():
+            regex = '\\b' + word.replace(' ', '\\b.*\\b') + '\\b'
+            if re.search(regex, textid['text']):
+                full_tweets[word].append(textid)
+    return full_tweets
+
+def filter_by_asso(full_tweets):
+    asso_tweets = {}
+
+    with open('files/association_words.json', 'r') as f:
+        log.log('Association words are available')
+        json_file = json.load(f)
+        wordlist = json_file['association']
+        for word in wordlist:
+            asso_tweets[word] = []
+
+    for key in asso_tweets.keys():
+        asso_tweets[key] = full_tweets[key]
+
+    return asso_tweets
+
+def withdraw_ids(full_tweets):
+    ids = []
+    for list_tweet in full_tweets.values():
+        for twt in list_tweet:
+            ids.append(twt['id'])
+    return list(set(ids))
+
+def aggregate_metrics(tweet_ids, database):
+    metric_tweets = []
+    retweet = [] 
+    tweets = [tweet for tweet in database['social_networks']['twitter'].find({'id': {'$in':tweet_ids}})]
+
+    for tweet in tweets:    
+        if 'referenced_tweets' in tweet.keys():
+            if tweet['referenced_tweets'][0]['type'] == 'retweeted':
+                key = tweet['referenced_tweets'][0]['id']
+                value = tweet['public_metrics']
+                retweet.append({'id': key, 'public_metrics': value})
+            else: 
+                metric_tweets.append({
+                    'id': tweet['id'],
+                    'text': tweet['text'],
+                    'public_metrics': tweet['public_metrics'],
+                    'lang': tweet['lang']
+                })
+        elif 'time-stamp' in tweet.keys():
+            metric_tweets.append(tweet)
+        else: 
+            metric_tweets.append({
+                'id': tweet['id'],
+                'text': tweet['text'],
+                'public_metrics': tweet['public_metrics'],
+                'lang': tweet['lang']
+            })
+    
+    for i in range(len(retweet)):
+        id = retweet[i]
+        for metric in metric_tweets:
+            if metric['id'] ==  id['id']:
+                for key in id['public_metrics'].keys():
+                    metric['public_metrics'][key] += id['public_metrics'][key]
+
+    return metric_tweets
 
 
 if __name__ == '__main__':

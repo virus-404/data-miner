@@ -1,12 +1,12 @@
 {
     "association": [
-        "tanneries", 
-        "animal",
-        "material",
-        "social", 
-        "legal",
-        "ecofriendly", 
-        "human"
+        "economy", 
+        "animal welfare",
+        "sustainability",
+        "transparency", 
+        "social",
+        "green", 
+        "human rights"
     ],
     "companies": [
         "Horween Tannery",
