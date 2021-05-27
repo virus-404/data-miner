@@ -1,15 +1,13 @@
-import requests
 import json
 import ast
-import cloud
 import csv
 import re
-import pandas as pd
-import matplotlib.pyplot as plt
-import xml.etree.ElementTree as ET
 
-from azure.ai.textanalytics import TextAnalyticsClient
-from azure.core.credentials import AzureKeyCredential
+
+import cloud
+import sentiment
+import chart
+
 from itertools import chain
 from tools.database import database as db
 from tools.logger import logger as lg
@@ -26,25 +24,23 @@ def main():
     set_name_files()
     database = db.Database.get_database_instance()
     log.log('Database connection stablished')
-    texts = get_tweets_text(database)
-    textids = get_tweets_idtext(database)
     '''
+    texts = get_tweets_text(database)  
+    textids = get_tweets_idtext(database)
     log.log('Tweets\' texts and ids are gathered')
     log.log('Counting words by filter')
     generate_wordcount_csv(texts)
     log.log('Generating Wordcloud')
-    generate_wordcloud()
+    build_wordcloud()
     log.log('Wordcloud generated!')
-    log.log('Counting verified users')
-    verified = count_verified(database)
-    log.log('Generating pie')
-    generate_pie_2opt(verified)
+    
     https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/quickstarts/client-libraries-rest-api?tabs=version-3-1&pivots=programming-language-python
+    calculate_sentiment_analysis(textids, database)
     '''
-    client = authenticate_client()
-    calculate_sentiment_analysis(client, textids, database)
+    calculate_sentiment_analysis([], database)
+    chart.generate(database, log)
 
-
+            
 def set_name_files():
     global csv_name, picture_name
 
@@ -55,18 +51,14 @@ def set_name_files():
         csv_name = name + '_all.csv'
         picture_name = name + '_all.png'
 
-
 def get_tweets_text(database):
     return [tweet['text'] for tweet in database['social_networks']['twitter'].find()]  # all
-
 
 def get_tweets_idtext(database):
     return [{'id': tweet['id'],  'text': tweet['text']} for tweet in database['social_networks']['twitter'].find()]  # all
 
-
-
-# if a word appears +1 times in a text. It is counted as one.
 def generate_wordcount_csv(texts):
+    # if a word appears +1 times in a text. It is counted as one.
     word_list = get_filter()
     word_counter = {}
     nleather = False  # to delete the top 1 word, in my case is leather
@@ -109,7 +101,6 @@ def generate_wordcount_csv(texts):
         for key, value in word_counter.items():
             writer.writerow({'word': key, 'counter': value})
 
-
 def get_filter():
     with open('files/filter_words.json', 'r', encoding='utf-8') as f:
         json_file = json.load(f)
@@ -118,82 +109,27 @@ def get_filter():
 
     return word_list
 
-
-def generate_wordcloud():
+def build_wordcloud():
     icon = 'cow.png'
     font = 'Swansea-q3pd.ttf'
     cloud.create(csv_name, font, icon, picture_name, filtered)
 
     # https: // github.com/minimaxir/stylistic-word-clouds/blob/master/wordcloud_dataisbeautiful.py https://minimaxir.com/2016/05/wordclouds/
 
-
-def count_verified(database):
-    data = {'Verified': 0, 'Not verified': 0}
-    for user in database['social_networks']['twitter_users'].find():
-        if user['verified']:
-            data['Verified'] += 1
-        else:
-            data['Not verified'] += 1
-
-    return data
-
-
-def generate_pie_2opt(data):
-    # Pie chart, where the slices will be ordered and plotted counter-clockwise:
-    explode = (0, 0.1)   # only 'explode' the 2nd slice (i.e. 'Hogs')
-    fig1, ax1 = plt.subplots(figsize=(4, 4))
-    colors = ('#2aa7f3', '#d3d3d3')
-    ax1.pie(data.values(), explode=explode, labels=data.keys(), autopct='%1.1f%%',
-            colors=colors, shadow=True, startangle=90)
-    # Equal aspect ratio ensures that pie is drawn as a circle.
-    ax1.axis('equal')
-    plt.savefig('files/results/verified.png', transparent=True)
-
-
-def authenticate_client():
-    keys = ET.parse('files/keys.xml')
-    tree = keys.getroot()
-    key = tree.find('key').text
-    endpoint = tree.find('endpoint').text
-
-    ta_credential = AzureKeyCredential(key)
-    text_analytics_client = TextAnalyticsClient(
-        endpoint=endpoint,
-        credential=ta_credential)
-    return text_analytics_client
-
-
-def calculate_sentiment_analysis(client, textids, database):
+def calculate_sentiment_analysis(textids, database):
+    """
     full_tweets = filter_tweets(textids)
     asso_tweets = filter_by_asso(full_tweets)
     full_ids = withdraw_ids(full_tweets)
     asso_ids = withdraw_ids(asso_tweets)
     log.log('Ids from tweets are already gathered')
     full_metrics = aggregate_metrics(full_ids, database)
-
-    for k, v in asso_tweets.items():
-        print(k, len(v))
-    print('asso', len(asso_ids))
-    print('full', len(full_ids))
-
+    sentiment.calculate(full_metrics, database, log) 
     """
-    https://www.pythoncharts.com/matplotlib/stacked-bar-charts-labels/
-    https://www.pythoncharts.com/matplotlib/radar-charts/
-
-    response = client.analyze_sentiment(documents=documents)[0]
-    print("Document Sentiment: {}".format(response.sentiment))
-    print("Overall scores: positive={0:.2f}; neutral={1:.2f}; negative={2:.2f} \n".format(
-        response.confidence_scores.positive,
-        response.confidence_scores.neutral,
-        response.confidence_scores.negative,
-    ))
-
-    """
+    sentiment.calculate([], database, log) 
 
 def filter_tweets(textids):
-    full_tweets = {}
-    for word in get_filter():
-        full_tweets[word] = []
+    full_tweets = {key: [] for key in get_filter()}
 
     for textid in textids:
         for word in full_tweets.keys():
@@ -203,14 +139,11 @@ def filter_tweets(textids):
     return full_tweets
 
 def filter_by_asso(full_tweets):
-    asso_tweets = {}
-
     with open('files/association_words.json', 'r') as f:
         log.log('Association words are available')
         json_file = json.load(f)
         wordlist = json_file['association']
-        for word in wordlist:
-            asso_tweets[word] = []
+        asso_tweets = {key: [] for key in wordlist}
 
     for key in asso_tweets.keys():
         asso_tweets[key] = full_tweets[key]
@@ -260,7 +193,6 @@ def aggregate_metrics(tweet_ids, database):
                     metric['public_metrics'][key] += id['public_metrics'][key]
 
     return metric_tweets
-
 
 if __name__ == '__main__':
     main()

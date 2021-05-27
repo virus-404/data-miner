@@ -3,4 +3,5 @@ pymongo
 pandas
 frozendict 
 stylecloud
+demoji
 azure-ai-textanalytics
