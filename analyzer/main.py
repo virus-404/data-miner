@@ -2,8 +2,6 @@ import json
 import ast
 import csv
 import re
-
-
 import cloud
 import sentiment
 import chart
@@ -32,12 +30,9 @@ def main():
     generate_wordcount_csv(texts)
     log.log('Generating Wordcloud')
     build_wordcloud()
-    log.log('Wordcloud generated!')
-    
-    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/quickstarts/client-libraries-rest-api?tabs=version-3-1&pivots=programming-language-python
+    log.log('Wordcloud generated!') #https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/quickstarts/client-libraries-rest-api?tabs=version-3-1&pivots=programming-language-python
     calculate_sentiment_analysis(textids, database)
     '''
-    calculate_sentiment_analysis([], database)
     chart.generate(database, log)
 
             
@@ -117,15 +112,12 @@ def build_wordcloud():
     # https: // github.com/minimaxir/stylistic-word-clouds/blob/master/wordcloud_dataisbeautiful.py https://minimaxir.com/2016/05/wordclouds/
 
 def calculate_sentiment_analysis(textids, database):
-    """
     full_tweets = filter_tweets(textids)
     asso_tweets = filter_by_asso(full_tweets)
     full_ids = withdraw_ids(full_tweets)
-    asso_ids = withdraw_ids(asso_tweets)
     log.log('Ids from tweets are already gathered')
     full_metrics = aggregate_metrics(full_ids, database)
     sentiment.calculate(full_metrics, database, log) 
-    """
     sentiment.calculate([], database, log) 
 
 def filter_tweets(textids):
@@ -147,6 +139,13 @@ def filter_by_asso(full_tweets):
 
     for key in asso_tweets.keys():
         asso_tweets[key] = full_tweets[key]
+        ids = {}
+
+        for key, value in asso_tweets.items():
+            ids[key] = withdraw_ids({key: value})
+
+    with open('files/jsons/ids.json', 'w+') as fout:
+        json.dump(ids, fout)
 
     return asso_tweets
 

@@ -14,10 +14,10 @@ def calculate(tweets, database, log):
     """
     tweets = delete_unrecognized_language(tweets)
     tweets = clean_tweets(tweets)
-    with open ('files/jsons/tweets.js', 'w+') as fout:
+    with open ('files/jsons/tweets.json', 'w+') as fout:
         json.dump(tweets, fout)
 
-    with open('files/jsons/tweets.js', 'r') as read_file:
+    with open('files/jsons/tweets.json', 'r') as read_file:
         tweets = json.load(read_file)
     print(len(tweets))
     #delete_analized_twt(tweets, database)
