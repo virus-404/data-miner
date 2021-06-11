@@ -2,6 +2,7 @@ import os
 import time
 import traceback
 import xml.etree.ElementTree as ET
+import multiprocessing as mp
 
 from tools.logger import logger
 from .tweet.filtered_stream import FilteredStream 
@@ -27,11 +28,24 @@ def run():
     keyring = tree.getroot()
     log.log('Reading credentials')
 
+    mp.set_start_method('fork')
+    p = mp.Process(target=streaming_connection, args=(
+        keyring.find('bearer-token').text, log,))
+    p.start()
+
+    q = q mp.Process(target=updating_connection, args=(
+        keyring.find('bearer-token').text, log,))
+    
+    q.start()
+    p.join() 
+    q.join()
+
+    '''
     if mode == 'streaming':
         streaming_connection(keyring.find('bearer-token').text, log)
     else: 
         updating_connection(keyring.find('bearer-token').text, log)
-  
+    ''' 
 
 def streaming_connection(token, log):
     attemps = 1  # number of attemps see(1)
@@ -64,16 +78,18 @@ def updating_connection(token, log):
     updater = UpdateTweet(token, log)
     
     try:
-        headers = updater.create_headers()
-        ids = updater.gather_ids()
-        for i in range(0, len(ids), 100):
-            log.log("Updating process: " + str(round((i/len(ids))*100, 2)) + '%')
-            while True:
-                try:
-                    updater.update(headers, ids[i:i+100])
-                    break
-                except:
-                    continue
+        while True:
+            time.sleep(900)
+            headers = updater.create_headers()
+            ids = updater.gather_ids()
+            for i in range(0, len(ids), 100):
+                log.log("Updating process: " + str(round((i/len(ids))*100, 2)) + '%')
+                while True:
+                    try:
+                        updater.update(headers, ids[i:i+100])
+                        break
+                    except:
+                        continue
     except:
         var = traceback.format_exc()
         print(var)
