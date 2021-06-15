@@ -11,18 +11,16 @@ from azure.core.credentials import AzureKeyCredential
 
 def calculate(tweets, database, log):
     client = authenticate_client()
-    """
     tweets = delete_unrecognized_language(tweets)
     tweets = clean_tweets(tweets)
-    with open ('files/jsons/tweets.json', 'w+') as fout:
+    with open ('files/jsons/aggregated_tweets.json', 'w+') as fout:
         json.dump(tweets, fout)
 
-    with open('files/jsons/tweets.json', 'r') as read_file:
+    with open('files/jsons/aggregated_tweets.json', 'r') as read_file:
         tweets = json.load(read_file)
     print(len(tweets))
-    #delete_analized_twt(tweets, database)
-    #sentiment_analysis(client, tweets, database)
-    """
+    delete_analized_twt(tweets, database)
+    sentiment_analysis(client, tweets, database)
 
 def authenticate_client():
     keys = ET.parse('files/keys.xml')
@@ -56,7 +54,7 @@ def delete_analized_twt(tweets, database):
     for i in del_ids: 
         del tweets[i]
 
-    with open('files/jsons/tweets.js', 'w+') as fout:
+    with open('files/jsons/aggregated_tweets.json', 'w+') as fout:
         json.dump(tweets, fout)
     print(len(tweets))
 

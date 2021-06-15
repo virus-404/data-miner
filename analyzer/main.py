@@ -4,7 +4,7 @@ import csv
 import re
 import cloud
 import sentiment
-import chart
+import pie
 
 from itertools import chain
 from tools.database import database as db
@@ -22,7 +22,6 @@ def main():
     set_name_files()
     database = db.Database.get_database_instance()
     log.log('Database connection stablished')
-    '''
     texts = get_tweets_text(database)  
     textids = get_tweets_idtext(database)
     log.log('Tweets\' texts and ids are gathered')
@@ -32,8 +31,7 @@ def main():
     build_wordcloud()
     log.log('Wordcloud generated!') #https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/quickstarts/client-libraries-rest-api?tabs=version-3-1&pivots=programming-language-python
     calculate_sentiment_analysis(textids, database)
-    '''
-    chart.generate(database, log)
+    pie.generate(database, log)
 
             
 def set_name_files():
