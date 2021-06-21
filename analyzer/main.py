@@ -109,9 +109,11 @@ def build_wordcloud():
 
     # https: // github.com/minimaxir/stylistic-word-clouds/blob/master/wordcloud_dataisbeautiful.py https://minimaxir.com/2016/05/wordclouds/
 
-def calculate_sentiment_analysis(textids, database):
+def calculate_sentiment_analysis(textids, database, filtered=False):
     full_tweets = filter_tweets(textids)
     asso_tweets = filter_by_asso(full_tweets)
+    if filtered: 
+        full_tweets = asso_tweets
     full_ids = withdraw_ids(full_tweets)
     log.log('Ids from tweets are already gathered')
     full_metrics = aggregate_metrics(full_ids, database)
