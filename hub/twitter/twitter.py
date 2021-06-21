@@ -14,6 +14,7 @@ from .tweet.update_tweet import UpdateTweet
         -   updating:   getting tweets metrics by sending id.
     It needs to be used first in streaming mode and then in updating mode. 
 '''
+mode = 'updating' 
 
 def set_up():
     cwd = os.getcwd()  # Get the current working directory (cwd)
@@ -32,7 +33,7 @@ def run():
         keyring.find('bearer-token').text, log,))
     p.start()
 
-    q = mp.Process(target=updating_connection, args=(
+    q = q mp.Process(target=updating_connection, args=(
         keyring.find('bearer-token').text, log,))
     
     q.start()
@@ -40,7 +41,6 @@ def run():
     q.join()
 
     '''
-    mode = 'updating' 
     if mode == 'streaming':
         streaming_connection(keyring.find('bearer-token').text, log)
     else: 
@@ -55,7 +55,7 @@ def streaming_connection(token, log):
             headers = streamer.create_headers()
             rules = streamer.get_rules(headers)
             delete = streamer.delete_all_rules(headers, rules)
-            new__rules = streamer.set_rules(headers, delete)
+            set = streamer.set_rules(headers, delete)
             attemps -= 1
         except:
             var = traceback.format_exc()
@@ -63,7 +63,7 @@ def streaming_connection(token, log):
         else:
             for _ in range(10):
                 try:
-                    streamer.get_stream(headers, new_rules)
+                    streamer.get_stream(headers, set)
                 except:
                     var = traceback.format_exc()
                     print(var)
