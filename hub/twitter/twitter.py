@@ -14,7 +14,7 @@ from .tweet.update_tweet import UpdateTweet
         -   updating:   getting tweets metrics by sending id.
     It needs to be used first in streaming mode and then in updating mode. 
 '''
-mode = 'updating' 
+
 
 def set_up():
     cwd = os.getcwd()  # Get the current working directory (cwd)
@@ -33,10 +33,10 @@ def run():
         keyring.find('bearer-token').text, log,))
     p.start()
 
-    q = q mp.Process(target=updating_connection, args=(
+    q = mp.Process(target=updating_connection, args=(
         keyring.find('bearer-token').text, log,))
-    
     q.start()
+    
     p.join() 
     q.join()
 
