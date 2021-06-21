@@ -109,14 +109,15 @@ def build_wordcloud():
 
     # https: // github.com/minimaxir/stylistic-word-clouds/blob/master/wordcloud_dataisbeautiful.py https://minimaxir.com/2016/05/wordclouds/
 
-def calculate_sentiment_analysis(textids, database):
-    full_tweets = filter_tweets(textids)
-    asso_tweets = filter_by_asso(full_tweets)
+def calculate_sentiment_analysis(textids, database, filtered=False):
+    if filetered: # if it is desired an exclusive csr wordcloud
+        full_tweets = filter_by_asso(full_tweets)
+    else:    
+        full_tweets = filter_tweets(textids)
     full_ids = withdraw_ids(full_tweets)
     log.log('Ids from tweets are already gathered')
     full_metrics = aggregate_metrics(full_ids, database)
     sentiment.calculate(full_metrics, database, log) 
-    sentiment.calculate([], database, log) 
 
 def filter_tweets(textids):
     full_tweets = {key: [] for key in get_filter()}
