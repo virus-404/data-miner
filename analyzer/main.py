@@ -117,7 +117,6 @@ def calculate_sentiment_analysis(textids, database, filtered=False):
     log.log('Ids from tweets are already gathered')
     full_metrics = aggregate_metrics(full_ids, database)
     sentiment.calculate(full_metrics, database, log) 
-    sentiment.calculate([], database, log) 
 
 def filter_tweets(textids):
     full_tweets = {key: [] for key in get_filter()}
